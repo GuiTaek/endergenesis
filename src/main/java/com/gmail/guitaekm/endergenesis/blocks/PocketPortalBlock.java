@@ -1,7 +1,7 @@
 package com.gmail.guitaekm.endergenesis.blocks;
 
 import com.gmail.guitaekm.endergenesis.EnderGenesis;
-import com.gmail.guitaekm.endergenesis.access.IServerPlayerEntityAccess;
+import com.gmail.guitaekm.endergenesis.access.IServerPlayerPocketPortalAccess;
 import com.gmail.guitaekm.endergenesis.networking.HandleLongUseServer;
 import com.gmail.guitaekm.endergenesis.teleport.TeleportParams;
 import com.gmail.guitaekm.endergenesis.teleport.VehicleTeleport;
@@ -18,16 +18,15 @@ import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.StructureFeature;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.security.MessageDigest;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class PocketPortalBlock extends Block implements HandleLongUseServer.Listener {
     // these will be configured through arbitrary structures -- it's just not implemented yet
@@ -82,6 +81,47 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
     public static void register(PocketPortalBlock block) {
         HandleLongUseServer.register(block);
     }
+    public static ChunkPos findFreePocketDimensionPlace(MinecraftServer server) {
+        Set<ChunkPos> occupiedPos = server
+                .getPlayerManager()
+                .getPlayerList()
+                .stream()
+                .map(player -> ((IServerPlayerPocketPortalAccess)player).endergenesis$getPocketDimensionPlace())
+                .collect(Collectors.toSet());
+        // it's probably fun to randomize this
+        long seed = server.getOverworld().getSeed();
+        Random rand = new Random(seed + occupiedPos.size());
+        int NR_CHUNKS_WIDTH = (int)Math.ceil((double)POCKET_DIMENSION_RADIUS / 16d);
+        int CHUNK_SPREAD = (int)((double)POCKET_DIMENSION_SPREAD / 16 / NR_CHUNKS_WIDTH);
+        for (int radius = 0; radius < CHUNK_SPREAD; radius++) {
+            // I use taxi geometry
+            List<ChunkPos> possiblePlaces = new ArrayList<>();
+            for (int x = -radius; x <= radius; x++) {
+                int z = radius - Math.abs(x);
+                possiblePlaces.add(new ChunkPos(x, z));
+                if (z != 0) {
+                    possiblePlaces.add(new ChunkPos(x, -z));
+                }
+            }
+            Collections.shuffle(possiblePlaces, rand);
+            Optional<ChunkPos> possibleResult = possiblePlaces
+                    .stream()
+                    .filter(chunkPos -> !occupiedPos.contains(chunkPos))
+                    .findFirst();
+            if (possibleResult.isPresent()) {
+                return possibleResult.get();
+            }
+        }
+        // there is nothing I can do in this case than just increasing the size of the field
+        return new ChunkPos(0, 0);
+    }
+    public static ChunkPos getOrCreatePocketPortalPos(ServerPlayerEntity player) {
+        ChunkPos pos = ((IServerPlayerPocketPortalAccess) player).endergenesis$getPocketDimensionPlace();
+        if (pos != null) {
+            return pos;
+        }
+        return PocketPortalBlock.findFreePocketDimensionPlace(Objects.requireNonNull(player.getServer()));
+    }
     @Override
     public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
         ModWorlds.LazyInformation info = ModWorlds.getInfo(server);
@@ -100,13 +140,13 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                 .STRUCTURE_FEATURE
                 .get(new Identifier(EnderGenesis.MOD_ID, "rare_pocket_portal"));
         if (player.getWorld().getRegistryKey().equals(info.pocketDimensionKey())) {
-            BlockPos targetPos = ((IServerPlayerEntityAccess) player).endergenesis$getLastUsedPocketPortal();
+            BlockPos targetPos = ((IServerPlayerPocketPortalAccess) player).endergenesis$getLastUsedPocketPortal();
             if (targetPos == null) {
                 EnderGenesis.LOGGER.warn("Tried to leave the pocket dimension two times in the row. The player likely used another teleportation method");
                 // todo: spawn the player at spawn
                 return;
             }
-            ((IServerPlayerEntityAccess) player).endergenesis$setLastUsedPocketPortal(null);
+            ((IServerPlayerPocketPortalAccess) player).endergenesis$setLastUsedPocketPortal(null);
             if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, rarePocketPortal).hasChildren()) {
                 if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, commonPocketPortal).hasChildren()) {
                     EnderGenesis.LOGGER.warn("corrupted player data");
@@ -117,12 +157,14 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
             PocketPortalBlock.pocketPortalTeleport(info.enderworld(), player, pocketPortal, targetPos);
 
         } else if (player.getWorld().getRegistryKey().equals(info.enderworldKey())) {
-            ((IServerPlayerEntityAccess) player).endergenesis$setLastUsedPocketPortal(pos.up());
+            ((IServerPlayerPocketPortalAccess) player).endergenesis$setLastUsedPocketPortal(pos.up());
+            // history of ideas for calculating the pocket dimension position:
             // the position should be different for each player and depend on the seed and the hash value of the player name
             // actually, the idea/comment explained directly above isn't good because of the birthday paradox.
             // It should be saved in the world and a free space should be chosen
-            this.preparePocketDimension(info.pocketDimension(), new BlockPos(0, 0, 0));
-            PocketPortalBlock.pocketPortalTeleport(info.pocketDimension(), player, pocketPortal, new BlockPos(0, 5, 0));
+            BlockPos pocketPos = PocketPortalBlock.getOrCreatePocketPortalPos(player).getBlockPos(7, 0, 7);
+            this.preparePocketDimension(info.pocketDimension(), pocketPos);
+            PocketPortalBlock.pocketPortalTeleport(info.pocketDimension(), player, pocketPortal, pocketPos.withY(5));
         } else {
             EnderGenesis.LOGGER.warn("Player tried to walk through a pocket portal outside of enderworld and pocket dimension. Should be impossible in survival.");
         }

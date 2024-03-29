@@ -5,7 +5,7 @@
   "mixins": [
     "ChunkTicketManagerMixin",
     "MouseMixin",
-    "ServerPlayerEntityMixin",
+    "ServerPlayerPocketPortalMixin",
     "ServerPlayerNetherEnderworldPortalMixin"
   ],
   "injectors": {
