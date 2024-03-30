@@ -6,10 +6,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EnderGenesis implements ModInitializer {
+public class EnderGenesis {
     public static String MOD_ID = "endergenesis";
     public static final Logger LOGGER = LoggerFactory.getLogger(EnderGenesis.MOD_ID);
-    @Override
     public void onInitialize() {
         //
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {

@@ -10,9 +10,12 @@ import com.gmail.guitaekm.endergenesis.particle.ModParticles;
 import com.gmail.guitaekm.endergenesis.particle.custom.EnderworldParticle;
 import com.gmail.guitaekm.endergenesis.resources.ModResourcesClient;
 import com.gmail.guitaekm.endergenesis.teleport.RegisterUtils;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 
-public class EnderGenesisClient {
+public class EnderGenesisClient implements ClientModInitializer {
+    @Override
     public void onInitializeClient() {
         ModBlocksClient.register();
         ParticleFactoryRegistry.getInstance().register(ModParticles.ENDERWORLD_PARTICLE, EnderworldParticle.Factory::new);

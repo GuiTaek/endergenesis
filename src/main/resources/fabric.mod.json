@@ -5,11 +5,11 @@
 	"name": "endergenesis",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Me!"
+		"GuiTaek"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/GuiTaek/endergenesis"
 	},
 	"license": "MIT",
 	"icon": "assets/technoenderling/icon.png",
@@ -18,10 +18,11 @@
 		"server": [
 			"com.gmail.guitaekm.endergenesis.EnderGenesisServer"
 		],
-		"main": [
-			"com.gmail.guitaekm.endergenesis.EnderGenesis"
-		],
-		"client": []
+		"main": [ ],
+		"client": [
+			"com.gmail.guitaekm.endergenesis.EnderGenesisServer",
+			"com.gmail.guitaekm.endergenesis.EnderGenesisClient"
+		]
 	},
 	"mixins": [
 		"technoenderling.mixins.json"

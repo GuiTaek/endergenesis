@@ -11,9 +11,11 @@ import com.gmail.guitaekm.endergenesis.networking.ModNetworking;
 import com.gmail.guitaekm.endergenesis.teleport.RegisterUtils;
 import com.gmail.guitaekm.endergenesis.teleport.VehicleTeleport;
 import com.gmail.guitaekm.endergenesis.worldgen.RegisterModStructures;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.api.ModInitializer;
 
-public class EnderGenesisServer implements DedicatedServerModInitializer {
+public class EnderGenesisServer implements DedicatedServerModInitializer, ClientModInitializer {
 	@Override
 	public void onInitializeServer() {
 		ModBlocks.register();
@@ -22,10 +24,14 @@ public class EnderGenesisServer implements DedicatedServerModInitializer {
 		ModResourcesServer.registerResources();
 		ModNetworking.registerNetworkingServer();
 		ModPointsOfInterest.registerClass();
-		VehicleTeleport.register();
 		RegisterModStructures.register();
 		EnderlingStructureInitializer.register();
 		RegisterGui.registerServer();
 		RegisterUtils.registerServer();
+	}
+
+	@Override
+	public void onInitializeClient() {
+		this.onInitializeServer();
 	}
 }
