@@ -88,6 +88,9 @@ public class PortalPropagation implements ServerTickEvents.EndTick {
             WorldChunk chunk,
             BlockPos pos
     ) {
+        if (!PortalPropagation.PROPAGATION_WHITELIST.contains(world.getRegistryKey().getValue())) {
+            return false;
+        }
 
         if (switchDimension(world) == null) {
             // As the server first loads the overworld fully before even creating the other dimensions,
