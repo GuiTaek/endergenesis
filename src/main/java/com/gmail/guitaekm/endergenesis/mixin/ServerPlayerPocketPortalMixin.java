@@ -48,9 +48,9 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
         }
         NbtCompound nbtCompound = new NbtCompound();
 
-        nbtCompound.putDouble("x", this.lastUsedPocketPortal.getX());
-        nbtCompound.putDouble("y", this.lastUsedPocketPortal.getY());
-        nbtCompound.putDouble("z", this.lastUsedPocketPortal.getZ());
+        nbtCompound.putInt("x", this.lastUsedPocketPortal.getX());
+        nbtCompound.putInt("y", this.lastUsedPocketPortal.getY());
+        nbtCompound.putInt("z", this.lastUsedPocketPortal.getZ());
         nbt.put("lastUsedPocketPortal", nbtCompound);
     }
     @Unique
@@ -73,7 +73,7 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
     public void readLastUsedPocketPortal(NbtCompound nbt) {
         if (nbt.contains("lastUsedPocketPortal", NbtElement.COMPOUND_TYPE)) {
             NbtCompound nbtCompound = nbt.getCompound("lastUsedPocketPortal");
-            this.lastUsedPocketPortal = new BlockPos(nbtCompound.getDouble("x"), nbtCompound.getDouble("y"), nbtCompound.getDouble("z"));
+            this.lastUsedPocketPortal = new BlockPos(nbtCompound.getInt("x"), nbtCompound.getInt("y"), nbtCompound.getInt("z"));
         }
     }
     @Unique

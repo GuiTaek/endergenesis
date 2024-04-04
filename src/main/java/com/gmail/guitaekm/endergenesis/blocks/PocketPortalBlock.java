@@ -2,6 +2,7 @@ package com.gmail.guitaekm.endergenesis.blocks;
 
 import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import com.gmail.guitaekm.endergenesis.access.IServerPlayerPocketPortalAccess;
+import com.gmail.guitaekm.endergenesis.event.AllPlayerNbt;
 import com.gmail.guitaekm.endergenesis.networking.HandleLongUseServer;
 import com.gmail.guitaekm.endergenesis.teleport.TeleportParams;
 import com.gmail.guitaekm.endergenesis.teleport.VehicleTeleport;
@@ -24,8 +25,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.StructureFeature;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PocketPortalBlock extends Block implements HandleLongUseServer.Listener {
@@ -81,26 +80,32 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
     public static void register(PocketPortalBlock block) {
         HandleLongUseServer.register(block);
     }
+
     public static ChunkPos findFreePocketDimensionPlace(MinecraftServer server) {
-        Set<ChunkPos> occupiedPos = server
-                .getPlayerManager()
-                .getPlayerList()
+        Set<ChunkPos> occupiedPos = AllPlayerNbt.getPlayerNbts(server)
+                .values()
                 .stream()
-                .map(player -> ((IServerPlayerPocketPortalAccess)player).endergenesis$getPocketDimensionPlace())
-                .collect(Collectors.toSet());
+                .map(
+                        nbt -> nbt.getCompound("pocketDimensionPlace")
+                ).map(
+                        nbt -> new ChunkPos(
+                                nbt.getInt("x"),
+                                nbt.getInt("z")
+                        )
+                ).collect(Collectors.toSet());
         // it's probably fun to randomize this
         long seed = server.getOverworld().getSeed();
         Random rand = new Random(seed + occupiedPos.size());
-        int NR_CHUNKS_WIDTH = (int)Math.ceil((double)POCKET_DIMENSION_RADIUS / 16d);
+        int NR_CHUNKS_WIDTH = 2 * (int)Math.ceil((double)POCKET_DIMENSION_RADIUS / 16d);
         int CHUNK_SPREAD = (int)((double)POCKET_DIMENSION_SPREAD / 16 / NR_CHUNKS_WIDTH);
         for (int radius = 0; radius < CHUNK_SPREAD; radius++) {
             // I use taxi geometry
             List<ChunkPos> possiblePlaces = new ArrayList<>();
             for (int x = -radius; x <= radius; x++) {
                 int z = radius - Math.abs(x);
-                possiblePlaces.add(new ChunkPos(x, z));
+                possiblePlaces.add(new ChunkPos(NR_CHUNKS_WIDTH * x, NR_CHUNKS_WIDTH * z));
                 if (z != 0) {
-                    possiblePlaces.add(new ChunkPos(x, -z));
+                    possiblePlaces.add(new ChunkPos(NR_CHUNKS_WIDTH * x, NR_CHUNKS_WIDTH * (-z)));
                 }
             }
             Collections.shuffle(possiblePlaces, rand);
@@ -120,7 +125,9 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
         if (pos != null) {
             return pos;
         }
-        return PocketPortalBlock.findFreePocketDimensionPlace(Objects.requireNonNull(player.getServer()));
+        ChunkPos pocketPlace = PocketPortalBlock.findFreePocketDimensionPlace(Objects.requireNonNull(player.getServer()));
+        ((IServerPlayerPocketPortalAccess) player).endergenesis$setPocketDimensionPlace(pocketPlace);
+        return pocketPlace;
     }
     @Override
     public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
