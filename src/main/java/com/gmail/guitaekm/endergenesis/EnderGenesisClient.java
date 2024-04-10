@@ -3,6 +3,7 @@ package com.gmail.guitaekm.endergenesis;
 import com.gmail.guitaekm.endergenesis.blocks.ModBlocksClient;
 import com.gmail.guitaekm.endergenesis.event.ModEventsClient;
 import com.gmail.guitaekm.endergenesis.gui.RegisterGui;
+import com.gmail.guitaekm.endergenesis.gui.ShowLongUse;
 import com.gmail.guitaekm.endergenesis.keybinds.ModKeybindsClient;
 import com.gmail.guitaekm.endergenesis.keybinds.RegisterKeyBinds;
 import com.gmail.guitaekm.endergenesis.networking.ModNetworking;
@@ -27,5 +28,6 @@ public class EnderGenesisClient implements ClientModInitializer {
         ModKeybindsClient.register();
         RegisterUtils.registerClient();
         RegisterGui.registerClient();
+        new ShowLongUse();
     }
 }

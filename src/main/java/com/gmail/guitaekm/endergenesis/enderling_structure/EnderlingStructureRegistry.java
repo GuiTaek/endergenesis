@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
@@ -19,6 +20,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.StringWriter;
 import java.text.MessageFormat;
@@ -103,26 +105,39 @@ public class EnderlingStructureRegistry implements
         return this.enderlingStructures.get(id);
     }
 
+    // called only by server
     @Override
     public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
+        ServerWorld world = player.getWorld();
+        Identifier id = this.findEnderlingStructure(player, pos);
+        EnderlingStructure structure = this.get(id);
+        if (id == null) {
+            return;
+        }
+        Optional<BlockPos> resultPos = structure.convertible().check(world, pos);
+        assert resultPos.isPresent();
+        if (EnderlingStructureEvents.ON_CONVERT.invoker().onConvert(
+                player,
+                world,
+                id,
+                structure,
+                resultPos.get()
+        )) {
+            structure.placeable().place(player.getWorld(), resultPos.get(), new Vec3i(0, 0, 0), Block.NOTIFY_ALL | Block.FORCE_STATE);
+        }
+    }
+    // called by client and server
+    public @Nullable Identifier findEnderlingStructure(PlayerEntity player, BlockPos pos) {
         List<Identifier> ids = new ArrayList<>(this.enderlingStructures.keySet());
         // there could be multiple structures possible. In that case, it shall be random which one is chosen
         Collections.shuffle(ids);
-        ServerWorld world = player.getWorld();
         for (Identifier id : ids) {
             EnderlingStructure structure = this.get(id);
             Optional<BlockPos> resultPos = structure.convertible().check(player.getWorld(), pos);
             if(resultPos.isPresent()) {
-                if (EnderlingStructureEvents.ON_CONVERT.invoker().onConvert(
-                        player,
-                        world,
-                        id,
-                        structure,
-                        resultPos.get()
-                )) {
-                    structure.placeable().place(player.getWorld(), resultPos.get(), new Vec3i(0, 0, 0), Block.NOTIFY_ALL | Block.FORCE_STATE);
-                }
+                return id;
             }
         }
+        return null;
     }
 }
