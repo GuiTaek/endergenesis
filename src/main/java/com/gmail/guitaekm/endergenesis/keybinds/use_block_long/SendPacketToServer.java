@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 public class SendPacketToServer implements CallbackClient {
-    public static final int MAX_AGE = 60;
+    public static final int MAX_AGE = 40;
     public static final Set<BlockPos> dirtyBlocks = new HashSet<>();
 
     @Override
