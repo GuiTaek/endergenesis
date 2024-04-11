@@ -6,6 +6,7 @@ import com.gmail.guitaekm.endergenesis.enderling_structure.*;
 import com.gmail.guitaekm.endergenesis.keybinds.use_block_long.CallbackClient;
 import com.gmail.guitaekm.endergenesis.keybinds.use_block_long.SendPacketToServer;
 import com.gmail.guitaekm.endergenesis.keybinds.use_block_long.UseBlockLong;
+import com.gmail.guitaekm.endergenesis.particle.LongUseParticle;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -24,11 +25,13 @@ public class ShowLongUse implements CallbackClient {
     public static String LONG_USE_NAME = "long_use_holding";
     public SoundEvent LONG_USE_SOUND;
     public static PositionedSoundInstance soundInProgress;
+    public static boolean isValidPos;
     public ShowLongUse() {
         UseBlockLong.registerListener(SendPacketToServer.MAX_AGE, this);
         Identifier id = new Identifier(EnderGenesis.MOD_ID, ShowLongUse.LONG_USE_NAME);
         LONG_USE_SOUND = Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
     }
+
     public static boolean checkValidLongUse(World world, PlayerEntity player, BlockPos pos) {
         Identifier id = EnderlingStructureInitializer.enderlingStructureRegistry.findEnderlingStructure(player, pos);
         BlockState toCheck = world.getBlockState(pos);
@@ -51,17 +54,26 @@ public class ShowLongUse implements CallbackClient {
     }
     @Override
     public void onStartUse(MinecraftClient client, World world, PlayerEntity player, BlockPos pos) {
-        if (ShowLongUse.checkValidLongUse(world, player, pos)) {
+        ShowLongUse.isValidPos = ShowLongUse.checkValidLongUse(world, player, pos);
+        if (ShowLongUse.isValidPos) {
             ShowLongUse.soundInProgress = new PositionedSoundInstance(this.LONG_USE_SOUND, SoundCategory.AMBIENT, 1f, 1f, pos);
             client.getSoundManager().play(ShowLongUse.soundInProgress);
         }
     }
 
     @Override
-    public void onUseTick(MinecraftClient client, World world, PlayerEntity player, BlockPos pos, int age) { }
+    public void onUseTick(MinecraftClient client, World world, PlayerEntity player, BlockPos pos, int age) {
+        if (!ShowLongUse.isValidPos) {
+            return;
+        }
+        LongUseParticle.spawnUsageParticle(world, pos, age);
+    }
 
     @Override
     public void onEndUse(MinecraftClient client, World world, PlayerEntity player, BlockPos pos, int age) {
+        if (!ShowLongUse.isValidPos) {
+            return;
+        }
         client.getSoundManager().stop(ShowLongUse.soundInProgress);
     }
 }

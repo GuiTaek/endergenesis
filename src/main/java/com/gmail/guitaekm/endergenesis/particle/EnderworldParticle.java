@@ -2,7 +2,7 @@
 from the YouTube video https://www.youtube.com/watch?v=cGEbensmW_c
  */
 
-package com.gmail.guitaekm.endergenesis.particle.custom;
+package com.gmail.guitaekm.endergenesis.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -52,7 +52,7 @@ public class EnderworldParticle
             // I have no idea why the maxAge that setSpriteForAge uses the same is
             // as when Particle dies. This makes no sense
             // to calculate the index of the next sprite, spriteProvider.getSprite will
-            // approximately calculate i/j
+            // approximately calculate i/j * nr_sprites
             // beware of out of bounds errors, as the getSprite won't check them
             this.setSprite(spriteProvider.getSprite(this.age, this.maxAge / EnderworldParticle.NR_SPRITES + 1));
         }
