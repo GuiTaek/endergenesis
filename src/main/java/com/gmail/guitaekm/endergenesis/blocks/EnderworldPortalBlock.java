@@ -67,7 +67,8 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
     final static public List<Identifier> allowedDimensions = List.of(
             new Identifier(EnderGenesis.MOD_ID, "enderworld"),
             new Identifier("minecraft:overworld"),
-            new Identifier("minecraft:the_nether")
+            new Identifier("minecraft:the_nether"),
+            new Identifier("minecraft:the_end")
     );
 
     @Nullable
@@ -181,6 +182,10 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
             player.openHandledScreen(new TeleportScreenFactory());
             // it's probably better to remove the source after the screen
             ((IServerPlayerNetherEnderworldPortal)player).endergenesis$setSource(null);
+            return;
+        }
+        if(player.getWorld().getRegistryKey().getValue().equals(new Identifier("minecraft:the_end"))) {
+            VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld, player);
             return;
         }
         if(player.getWorld().getBlockState(pos).get(GENERATED)) {

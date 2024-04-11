@@ -2,6 +2,7 @@ package com.gmail.guitaekm.endergenesis.teleport;
 
 import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import com.gmail.guitaekm.endergenesis.blocks.TreeTraverser;
+import com.gmail.guitaekm.endergenesis.enderling_structure.LinkEnderworldPortals;
 import com.gmail.guitaekm.endergenesis.networking.ModNetworking;
 import com.gmail.guitaekm.endergenesis.networking.WaitMountingPacket;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -12,10 +13,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.*;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.SpawnHelper;
 
 import java.text.MessageFormat;
@@ -165,5 +169,30 @@ public class VehicleTeleport {
             }
         }
         return true;
+    }
+
+    public static void teleportToEnderworldSpawn(MinecraftServer server, ServerWorld enderworld, ServerPlayerEntity player) {
+        int spawnRadius = server.getOverworld().getGameRules().getInt(GameRules.SPAWN_RADIUS);
+        BlockPos overworldSpawn = server.getOverworld().getSpawnPos();
+        BlockPos overworldPlace = overworldSpawn
+                .add(
+                        enderworld.getRandom().nextInt(-spawnRadius, spawnRadius),
+                        0,
+                        enderworld.getRandom().nextInt(-spawnRadius, spawnRadius)
+                );
+        BlockPos enderworldPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, overworldPlace);
+        int y = enderworld
+                .getChunk(enderworldPlace)
+                .getHeightmap(Heightmap.Type.WORLD_SURFACE)
+                .get(enderworldPlace.getX() & 15, enderworldPlace.getZ() & 15);
+        enderworldPlace = enderworldPlace.withY(y);
+        teleportWithVehicle(new TeleportParams(
+                player,
+                enderworld,
+                enderworldPlace,
+                enderworldPlace.getX() + 0.5,
+                enderworldPlace.getY(),
+                enderworldPlace.getZ()
+        ));
     }
 }

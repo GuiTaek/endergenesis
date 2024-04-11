@@ -150,14 +150,14 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
             BlockPos targetPos = ((IServerPlayerPocketPortalAccess) player).endergenesis$getLastUsedPocketPortal();
             if (targetPos == null) {
                 EnderGenesis.LOGGER.warn("Tried to leave the pocket dimension two times in the row. The player likely used another teleportation method");
-                // todo: spawn the player at spawn
+                VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld(), player);
                 return;
             }
             ((IServerPlayerPocketPortalAccess) player).endergenesis$setLastUsedPocketPortal(null);
             if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, rarePocketPortal).hasChildren()) {
                 if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, commonPocketPortal).hasChildren()) {
                     EnderGenesis.LOGGER.warn("corrupted player data");
-                    // todo: spawn the player at spawn
+                    VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld(), player);
                     return;
                 }
             }

@@ -45,6 +45,9 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
         ))) {
             return true;
         }
+        if (world.getRegistryKey().getValue().equals(new Identifier("minecraft:the_end"))) {
+            return true;
+        }
         return LinkEnderworldPortals.placePortal(player, world, portalId, portal, root);
     }
 
