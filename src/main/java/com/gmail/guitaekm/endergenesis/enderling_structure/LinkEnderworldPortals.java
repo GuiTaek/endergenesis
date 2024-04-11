@@ -33,6 +33,9 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
 
     @Override
     public boolean onConvert(ServerPlayerEntity player, ServerWorld world, Identifier portalId, EnderlingStructure portal, BlockPos root) {
+        if (!portalId.equals(new Identifier(EnderGenesis.MOD_ID, "enderworld_portal"))) {
+            return true;
+        }
         if (!EnderworldPortalBlock.allowedDimensions.contains(world.getRegistryKey().getValue())) {
             return false;
         }
