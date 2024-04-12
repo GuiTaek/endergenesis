@@ -7,24 +7,29 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class DarknessApplierServer implements ServerTickEvents.EndTick {
     @Override
     public void onEndTick(MinecraftServer server) {
-        List<ServerPlayerEntity> playersToProcess = server.getPlayerManager().getPlayerList().stream()
+        server.getPlayerManager().getPlayerList().stream()
                 .filter(
                         (PlayerEntity player)->FogBiomes.isFogBiome(
                                 player
                                         .getWorld()
                                         .getBiomeKey(player.getBlockPos())
-                                        .get()
+                                        .orElse(BiomeKeys.PLAINS)
                                         .getValue()
                                         .toString()
                         )
-                ).toList();
-        playersToProcess.stream()
+                )
+                .filter(player -> !player.isSpectator())
+                .filter(player -> !player.isCreative())
                 .forEach(
                         (PlayerEntity player)->{
                             player.addStatusEffect(
