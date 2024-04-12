@@ -39,6 +39,17 @@ public class VehicleTeleport {
     };
     protected static Map<Integer, TreeTraverser<Entity>> unmountedPlayers = new HashMap<>();
     public static void teleportWithVehicle(TeleportParams params) {
+        // seems to work better with this
+        params
+                .player
+                .getWorld()
+                .getChunkManager()
+                .addTicket(
+                        ChunkTicketType.POST_TELEPORT,
+                        params.player.getChunkPos(),
+                        3,
+                        params.player.getId()
+                );
         TreeTraverser<Entity> treeTraverser = TreeTraverser.parseVertex(
                 params.player.getRootVehicle(),
                 Entity::getPassengerList,

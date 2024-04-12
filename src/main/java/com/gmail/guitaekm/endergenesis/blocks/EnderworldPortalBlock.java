@@ -17,6 +17,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -66,6 +67,7 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
 
     final static public List<Identifier> allowedDimensions = List.of(
             new Identifier(EnderGenesis.MOD_ID, "enderworld"),
+            new Identifier(EnderGenesis.MOD_ID, "pocket_dimension"),
             new Identifier("minecraft:overworld"),
             new Identifier("minecraft:the_nether"),
             new Identifier("minecraft:the_end")
@@ -185,6 +187,28 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
             return;
         }
         if(player.getWorld().getRegistryKey().getValue().equals(new Identifier("minecraft:the_end"))) {
+            VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld, player);
+            return;
+        }
+        if (player.getWorld().getRegistryKey().getValue().equals(new Identifier(EnderGenesis.MOD_ID, "pocket_dimension"))) {
+            BlockPos spawnPos = player.getSpawnPointPosition();
+            RegistryKey<World> spawnDimKey = player.getSpawnPointDimension();
+            ServerWorld spawnDim = Objects.requireNonNull(server.getWorld(spawnDimKey));
+            if (spawnPos == null) {
+                VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld, player);
+                return;
+            }
+            boolean isRespawnableMinecraft = PlayerEntity
+                    .findRespawnPosition(spawnDim, spawnPos, 0, false, true)
+                    .isPresent();
+            boolean vehicleRespawnable = !player.hasVehicle()
+                    || VehicleTeleport.canVehicleSpawn(spawnDim, spawnPos.add(0, 1, 0));
+            if (isRespawnableMinecraft && vehicleRespawnable) {
+                VehicleTeleport.teleportWithVehicle(new TeleportParams(
+                        player, spawnDim, spawnPos, spawnPos.getX(), spawnPos.getY() + 1, spawnPos.getZ()
+                ));
+                return;
+            }
             VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld, player);
             return;
         }
