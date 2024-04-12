@@ -47,7 +47,7 @@ public class LongUseParticle extends SpriteBillboardParticle {
             world.addParticle(
                     ModParticles.LONG_USE_PARTICLE,
                     pos.getX() + 0.5,
-                    pos.getY(),
+                    pos.getY() + 0.1,
                     pos.getZ() + 0.5,
                     HORIZONTAL_VELOCITY_SCALE * (2 * world.getRandom().nextFloat() - 1),
                     VERTICAL_VELOCITY_SCALE * world.getRandom().nextFloat(),
