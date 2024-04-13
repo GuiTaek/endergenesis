@@ -61,6 +61,7 @@ public class OneWayPortal extends BlockWithEntity implements HandleLongUseServer
         ));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
         if (this.getStateManager().getStates().contains(stateFrom)) {
