@@ -14,6 +14,7 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -29,7 +30,9 @@ public class ShowLongUse implements CallbackClient {
     public ShowLongUse() {
         UseBlockLong.registerListener(SendPacketToServer.MAX_AGE, this);
         Identifier id = new Identifier(EnderGenesis.MOD_ID, ShowLongUse.LONG_USE_NAME);
-        LONG_USE_SOUND = Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
+        // return this when we have a sound with an own license
+        // LONG_USE_SOUND = Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
+        LONG_USE_SOUND = SoundEvents.BLOCK_PORTAL_AMBIENT;
     }
 
     public static boolean checkValidLongUse(World world, PlayerEntity player, BlockPos pos) {
