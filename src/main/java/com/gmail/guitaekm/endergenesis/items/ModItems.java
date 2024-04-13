@@ -31,7 +31,7 @@ public class ModItems {
     );
     public static final BlockItem POCKET_PORTAL_BLOCK = new BlockItem(
             ModBlocks.POCKET_PORTAL_BLOCK,
-            new FabricItemSettings().group(ItemGroup.TRANSPORTATION)
+            new FabricItemSettings()
     );
     public static void register() {
         Registry.register(
