@@ -8,9 +8,11 @@ import com.gmail.guitaekm.endergenesis.teleport.TeleportParams;
 import com.gmail.guitaekm.endergenesis.teleport.VehicleTeleport;
 import com.gmail.guitaekm.endergenesis.worldgen.ModWorlds;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -22,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.gen.feature.StructureFeature;
 
 import java.util.*;
@@ -342,5 +345,9 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
             }
         }
         return new Vec3i(0, 0, 0);
+    }
+    @Override
+    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+        return ItemStack.EMPTY;
     }
 }
