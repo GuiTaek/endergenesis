@@ -12,7 +12,7 @@
 		"sources": "https://github.com/GuiTaek/endergenesis"
 	},
 	"license": "MIT",
-	"icon": "assets/technoenderling/icon.png",
+	"icon": "assets/endergenesis/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"server": [
