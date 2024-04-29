@@ -191,7 +191,7 @@ public class VehicleTeleport {
                         0,
                         enderworld.getRandom().nextInt(-spawnRadius, spawnRadius)
                 );
-        BlockPos enderworldPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, overworldPlace);
+        BlockPos enderworldPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, overworldPlace, enderworld.getSeed());
         int y = enderworld
                 .getChunk(enderworldPlace)
                 .getHeightmap(Heightmap.Type.WORLD_SURFACE)

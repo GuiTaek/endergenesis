@@ -14,7 +14,7 @@ public class LinkGeneratedEnderworldPortal
     public static void generateOtherPortal(MinecraftServer server, ArbitraryStructure portal, BlockPos root) {
         ServerWorld enderworld = ModWorlds.getInfo(server).enderworld();
         assert enderworld != null;
-        BlockPos toPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, root);
+        BlockPos toPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, root, enderworld.getSeed());
         // link to the surface
         // this method only works when the chunk is loaded, see World.getTopY and as it isn't as easy
         // to load the world on the fly, I'll just grep the part of World.getTopY that I need

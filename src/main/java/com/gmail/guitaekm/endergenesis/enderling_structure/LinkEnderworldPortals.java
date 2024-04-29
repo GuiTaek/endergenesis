@@ -27,6 +27,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvertListener {
+
+    public static long SALT = 7281461761367002420L;
+    // approx. sqrt(Long.MAX_VALUE), so half the entropy is for the salt, half for the coord
+    public static long X_SALT = 1522999640;
+    public static long Z_SALT = 488435234;
+
     public void register() {
         EnderlingStructureEvents.ON_CONVERT.register(this);
     }
@@ -80,8 +86,9 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
         return false;
     }
 
-    public static BlockPos overworldToEnderworldRandom(WorldAccess enderworld, BlockPos overworldPos) {
-        Random random = enderworld.getRandom();
+    public static BlockPos overworldToEnderworldRandom(WorldAccess enderworld, BlockPos overworldPos, long seed) {
+        // overflow is explicitly desired and possible
+        Random random = new Random(seed + SALT + X_SALT * overworldPos.getX() + Z_SALT * overworldPos.getZ());
         BlockPos start = EnderworldPortalBlock.overworldToEnderworldStart(enderworld.getServer(), overworldPos);
         BlockPos end = EnderworldPortalBlock.overworldToEnderworldEnd(enderworld.getServer(), overworldPos);
         return  new BlockPos(
@@ -103,7 +110,7 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
             ServerWorld enderworld,
             BlockPos overworldPos) {
         List<BlockPos> possiblePortals = EnderworldPortalBlock.findPortalPosToEnderworld(enderworld.getServer(), overworldPos).toList();
-        BlockPos randomPosition = overworldToEnderworldRandom(enderworld, overworldPos);
+        BlockPos randomPosition = overworldToEnderworldRandom(enderworld, overworldPos, enderworld.getSeed());
         return findPortalSpawnHelper(
                 player,
                 enderworld,
