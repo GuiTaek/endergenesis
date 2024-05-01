@@ -78,7 +78,7 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
     }
     @Unique
     public void readPocketDimensionPlace(NbtCompound nbt) {
-        if (nbt.contains("lastUsedPocketPortal", NbtElement.COMPOUND_TYPE)) {
+        if (nbt.contains("pocketDimensionPlace", NbtElement.COMPOUND_TYPE)) {
             NbtCompound nbtCompound = nbt.getCompound("pocketDimensionPlace");
             this.pocketDimensionPlace = new ChunkPos(nbtCompound.getInt("x"), nbtCompound.getInt("z"));
         }
