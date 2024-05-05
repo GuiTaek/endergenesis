@@ -1,9 +1,13 @@
 package com.gmail.guitaekm.endergenesis.mixin;
 
 import com.gmail.guitaekm.endergenesis.access.IServerPlayerPocketPortalAccess;
+import com.gmail.guitaekm.endergenesis.event.DeathPersistantPlayer;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +24,14 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
 
     @Unique
     private @Nullable ChunkPos pocketDimensionPlace = null;
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo info) {
+        new DeathPersistantPlayer(
+                ServerPlayerPocketPortalMixin::readNbt,
+                ServerPlayerPocketPortalMixin::writeNbt
+        );
+    }
 
     @Override
     public void endergenesis$setLastUsedPocketPortal(@Nullable BlockPos position) {
@@ -63,10 +75,19 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
         place.putInt("z", this.pocketDimensionPlace.z);
         nbt.put("pocketDimensionPlace", place);
     }
-    @Inject(method = "writeCustomDataToNbt", at=@At("TAIL"))
-    public void writeCustomDataToNbtTail(NbtCompound nbt, CallbackInfo ci) {
+    @Override
+    public void endergenesis$PocketPortal$writeNbt(NbtCompound nbt) {
         writeLastUsedPocketPortal(nbt);
         writePocketDimensionPlace(nbt);
+    }
+    @Inject(method = "writeCustomDataToNbt", at=@At("TAIL"))
+    public void writeCustomDataToNbtTail(NbtCompound nbt, CallbackInfo ci) {
+        this.endergenesis$PocketPortal$writeNbt(nbt);
+    }
+
+    @Unique
+    private static void writeNbt(ServerPlayerEntity player, NbtCompound nbt) {
+        ((IServerPlayerPocketPortalAccess)player).endergenesis$PocketPortal$writeNbt(nbt);
     }
 
     @Unique
@@ -83,9 +104,17 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
             this.pocketDimensionPlace = new ChunkPos(nbtCompound.getInt("x"), nbtCompound.getInt("z"));
         }
     }
-    @Inject(method = "readCustomDataFromNbt", at=@At("TAIL"))
-    public void readCustomDataFromNbtTail(NbtCompound nbt, CallbackInfo ci) {
+    @Override
+    public void endergenesis$PocketPortal$readNbt(NbtCompound nbt) {
         readLastUsedPocketPortal(nbt);
         readPocketDimensionPlace(nbt);
+    }
+    @Inject(method = "readCustomDataFromNbt", at=@At("TAIL"))
+    public void readCustomDataFromNbtTail(NbtCompound nbt, CallbackInfo ci) {
+        this.endergenesis$PocketPortal$readNbt(nbt);
+    }
+    @Unique
+    private static void readNbt(ServerPlayerEntity player, NbtCompound nbt) {
+        ((IServerPlayerPocketPortalAccess)player).endergenesis$PocketPortal$readNbt(nbt);
     }
 }

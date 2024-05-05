@@ -2,10 +2,14 @@ package com.gmail.guitaekm.endergenesis.mixin;
 
 import com.gmail.guitaekm.endergenesis.access.IServerPlayerNetherEnderworldPortal;
 import com.gmail.guitaekm.endergenesis.blocks.EnderworldPortalBlock;
+import com.gmail.guitaekm.endergenesis.event.DeathPersistantPlayer;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,6 +37,14 @@ public class ServerPlayerNetherEnderworldPortalMixin implements IServerPlayerNet
     private final List<EnderworldPortalBlock.NetherInstance> savedDestinations = new ArrayList<>();
     @Unique
     private EnderworldPortalBlock.NetherInstance source = null;
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo info) {
+        new DeathPersistantPlayer(
+                ServerPlayerNetherEnderworldPortalMixin::readNbt,
+                ServerPlayerNetherEnderworldPortalMixin::writeNbt
+        );
+    }
 
     @Override
     public void endergenesis$remove(BlockPos pos) {
@@ -173,8 +185,13 @@ public class ServerPlayerNetherEnderworldPortalMixin implements IServerPlayerNet
         int id = nbtInstance.getInt("id");
         return new EnderworldPortalBlock.NetherInstance(id, instanceName, pos);
     }
-    @Inject(method = "writeCustomDataToNbt", at=@At("TAIL"))
-    public void writeCustomDataToNbtTail(NbtCompound nbt, CallbackInfo ci) {
+    @Unique
+    private static void writeNbt(ServerPlayerEntity player, NbtCompound nbt) {
+        ((IServerPlayerNetherEnderworldPortal)player).endergenesis$NetherEnderworldPortal$writeNbt(nbt);
+    }
+
+    @Override
+    public void endergenesis$NetherEnderworldPortal$writeNbt(NbtCompound nbt) {
         NbtList nbtDestinations = new NbtList();
         this.savedDestinations.forEach(
                 netherInstance -> nbtDestinations.add(instanceToNbt(netherInstance))
@@ -182,8 +199,13 @@ public class ServerPlayerNetherEnderworldPortalMixin implements IServerPlayerNet
         nbt.put("netherDestinations", nbtDestinations);
     }
 
-    @Inject(method = "readCustomDataFromNbt", at=@At("TAIL"))
-    public void readCustomDataFromNbtTail(NbtCompound nbt, CallbackInfo ci) {
+    @Inject(method = "writeCustomDataToNbt", at=@At("TAIL"))
+    public void writeCustomDataToNbtTail(NbtCompound nbt, CallbackInfo ci) {
+        this.endergenesis$NetherEnderworldPortal$writeNbt(nbt);
+    }
+
+    @Override
+    public void endergenesis$NetherEnderworldPortal$readNbt(NbtCompound nbt) {
         this.savedDestinations.clear();
         NbtList nbtDesinations = nbt.getList("netherDestinations", NbtElement.COMPOUND_TYPE);
         this.savedDestinations.addAll(
@@ -192,5 +214,15 @@ public class ServerPlayerNetherEnderworldPortalMixin implements IServerPlayerNet
                         .map(nbtElement -> nbtToInstance((NbtCompound) nbtElement))
                         .toList()
         );
+    }
+
+    @Unique
+    private static void readNbt(ServerPlayerEntity player, NbtCompound nbt) {
+        ((IServerPlayerNetherEnderworldPortal) player).endergenesis$NetherEnderworldPortal$readNbt(nbt);
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at=@At("TAIL"))
+    public void readCustomDataFromNbtTail(NbtCompound nbt, CallbackInfo ci) {
+        this.endergenesis$NetherEnderworldPortal$readNbt(nbt);
     }
 }
