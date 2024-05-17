@@ -265,14 +265,19 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                 Math.floorDiv(portalSize.getZ() - 1, 2)
         );
         Vec3i radius = getPocketDimensionDimensions(pocketDimension, pos.add(0, 4, 0));
+        Vec3i biggestDim = WARD_POWERS.get(WARD_POWERS.size() - 1);
+        int xRadiusBedrock = biggestDim.getX() + 1;
+        int yRadiusBedrock = Math.max(portalSize.getY(), biggestDim.getY()) + 1;
+        int zRadiusBedrock = biggestDim.getZ() + 1;
+
         // configure
-        for (int x = -POCKET_DIMENSION_RADIUS; x <= POCKET_DIMENSION_RADIUS; x++) {
-            for (int z = -POCKET_DIMENSION_RADIUS; z <= POCKET_DIMENSION_RADIUS; z++) {
+        for (int x = -xRadiusBedrock; x <= xRadiusBedrock; x++) {
+            for (int z = -zRadiusBedrock; z <= zRadiusBedrock; z++) {
                 {
                     int y = 0;
                     pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BEDROCK.getDefaultState());
                 }
-                for (int y = 1; y <= POCKET_DIMENSION_RADIUS; y++) {
+                for (int y = 1; y <= yRadiusBedrock; y++) {
                     if (-radius.getX() <= x && x <= radius.getX()
                             && -radius.getZ() <= z && z <= radius.getZ()
                             && y <= radius.getY()) {
@@ -288,10 +293,6 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                         }
                         continue;
                     }
-                    Vec3i biggestDim = WARD_POWERS.get(WARD_POWERS.size() - 1);
-                    int xRadiusBedrock = biggestDim.getX() + 1;
-                    int yRadiusBedrock = Math.max(portalSize.getY(), biggestDim.getY()) + 1;
-                    int zRadiusBedrock = biggestDim.getZ() + 1;
                     if (
                             x >= xRadiusBedrock
                             || x <= -xRadiusBedrock
@@ -299,7 +300,8 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                             || z >= zRadiusBedrock
                             || z <= -zRadiusBedrock
                     ) {
-                        pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BEDROCK.getDefaultState(), Block.NOTIFY_LISTENERS);
+                        // bottleneck
+                        pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BEDROCK.getDefaultState());
                         continue;
                     }
                     pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BARRIER.getDefaultState());
