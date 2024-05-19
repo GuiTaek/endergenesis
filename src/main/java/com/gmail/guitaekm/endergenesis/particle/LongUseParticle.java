@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 public class LongUseParticle extends SpriteBillboardParticle {
     public static int NR_SPRITES = 8;
     public static int SPRITE_DELAY = 4;
-    public static float HORIZONTAL_VELOCITY_SCALE = 0.01f;
-    public static float VERTICAL_VELOCITY_SCALE = 0.003f;
+    public static float HORIZONTAL_VELOCITY_SCALE = 0.1f;
+    public static float VERTICAL_VELOCITY_SCALE = 0.1f;
     public static int PARTICLES_PER_TICK = 4;
     public static float PARTICLE_SCALE = 0.3f;
     private final SpriteProvider spriteSet;
@@ -29,6 +29,9 @@ public class LongUseParticle extends SpriteBillboardParticle {
             double vz
     ) {
         super(world, x, y, z, vx, vy, vz);
+        this.velocityX = vx;
+        this.velocityY = vy;
+        this.velocityZ = vz;
         this.setMaxAge(40);
         this.scale *= LongUseParticle.PARTICLE_SCALE;
         this.spriteSet = spriteSet;
@@ -44,14 +47,32 @@ public class LongUseParticle extends SpriteBillboardParticle {
             if (world.getRandom().nextFloat() > LongUseParticle.getProbabilityOfParticle(relAge)) {
                 return;
             }
+            float vx = HORIZONTAL_VELOCITY_SCALE * (2 * world.getRandom().nextFloat() - 1);
+            float vy = VERTICAL_VELOCITY_SCALE * world.getRandom().nextFloat();
+            float vz = HORIZONTAL_VELOCITY_SCALE * (2 * world.getRandom().nextFloat() - 1);
+            float scale;
+            // project to the cube
+            float checkVal = Math.max(Math.abs(vx), Math.max(Math.abs(vy), Math.abs(vz)));
+            if (checkVal == Math.abs(vx)) {
+                scale = 1 / Math.abs(vx);
+            } else if (checkVal == Math.abs(vz)) {
+                scale = 1 / Math.abs(vz);
+            } else {
+                scale = 1 / Math.abs(vy);
+            }
+            float volXZ = 0.5f;
+            float volY = 1f;
+            float dx = scale * vx * volXZ;
+            float dy = scale * vy * volY;
+            float dz = scale * vz * volXZ;
             world.addParticle(
                     ModParticles.LONG_USE_PARTICLE,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.1,
-                    pos.getZ() + 0.5,
-                    HORIZONTAL_VELOCITY_SCALE * (2 * world.getRandom().nextFloat() - 1),
-                    VERTICAL_VELOCITY_SCALE * world.getRandom().nextFloat(),
-                    HORIZONTAL_VELOCITY_SCALE * (2 * world.getRandom().nextFloat() - 1)
+                    pos.getX() + 0.5 + dx,
+                    pos.getY() + dy,
+                    pos.getZ() + 0.5 + dz,
+                    vx,
+                    vy,
+                    vz
             );
         }
     }
