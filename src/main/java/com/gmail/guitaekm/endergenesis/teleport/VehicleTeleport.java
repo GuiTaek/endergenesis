@@ -57,6 +57,7 @@ public class VehicleTeleport {
                     if(entity.hasVehicle()) {
                         entity.stopRiding();
                     }
+                    entity.setOnGround(true);
                     return teleportUnmountedEntity(entity, params.targetWorld, params.portalPos, params.x, params.y, params.z);
                 });
         // tps with /tp of boats with players inside boats are completely ignored, players gets dismounted on tps

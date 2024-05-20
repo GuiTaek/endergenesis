@@ -249,7 +249,7 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
         VehicleTeleport.teleportWithVehicle(new TeleportParams(
                 player, destination, portalPosition,
                 portalPosition.getX() + 0.5,
-                portalPosition.getY() + 1. + yOff,
+                portalPosition.getY() + yOff,
                 portalPosition.getZ() + 0.5
         ));
     }

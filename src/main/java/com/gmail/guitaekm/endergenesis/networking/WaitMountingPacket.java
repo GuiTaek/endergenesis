@@ -45,6 +45,10 @@ public class WaitMountingPacket {
             if (world.getEntityById(id) == null) {
                 return false;
             }
+            if (world.getEntityById(id).hasVehicle()) {
+                world.getEntityById(id).stopRiding();
+                return false;
+            }
         }
         return true;
     }
