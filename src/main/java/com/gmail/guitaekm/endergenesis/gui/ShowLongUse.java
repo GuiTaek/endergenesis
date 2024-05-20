@@ -30,9 +30,7 @@ public class ShowLongUse implements CallbackClient {
     public ShowLongUse() {
         UseBlockLong.registerListener(SendPacketToServer.MAX_AGE, this);
         Identifier id = new Identifier(EnderGenesis.MOD_ID, ShowLongUse.LONG_USE_NAME);
-        // return this when we have a sound with an own license
-        // LONG_USE_SOUND = Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
-        LONG_USE_SOUND = SoundEvents.BLOCK_PORTAL_AMBIENT;
+        LONG_USE_SOUND = Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
     }
 
     public static boolean checkValidLongUse(World world, PlayerEntity player, BlockPos pos) {
