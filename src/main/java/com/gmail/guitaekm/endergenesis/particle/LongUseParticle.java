@@ -91,7 +91,7 @@ public class LongUseParticle extends SpriteBillboardParticle {
 
     private void fadeOut() {
         float deltaAge = this.maxAge - this.age;
-        this.colorAlpha = deltaAge * deltaAge / this.maxAge / this.maxAge;
+        this.alpha = deltaAge * deltaAge / this.maxAge / this.maxAge;
     }
 
     @Override

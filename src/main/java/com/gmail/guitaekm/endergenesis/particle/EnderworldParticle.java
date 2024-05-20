@@ -43,9 +43,9 @@ public class EnderworldParticle
         );
         this.spriteProvider = spriteProvider;
         this.setMaxAge(600);
-        this.colorRed = 1F;
-        this.colorGreen = 1F;
-        this.colorBlue = 1F;
+        this.red = 1F;
+        this.green = 1F;
+        this.blue = 1F;
     }
     public void setSpriteForAge(SpriteProvider spriteProvider) {
         if (!this.dead) {

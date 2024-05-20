@@ -75,7 +75,7 @@ public class TeleportScreen extends HandledScreen<TeleportScreenHandler> impleme
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return true;
     }
 

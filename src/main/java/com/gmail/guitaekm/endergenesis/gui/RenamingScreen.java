@@ -25,7 +25,7 @@ public class RenamingScreen extends HandledScreen<RenamingScreenHandler> {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return true;
     }
 
