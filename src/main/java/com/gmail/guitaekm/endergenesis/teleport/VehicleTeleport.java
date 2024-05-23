@@ -1,6 +1,7 @@
 package com.gmail.guitaekm.endergenesis.teleport;
 
 import com.gmail.guitaekm.endergenesis.EnderGenesis;
+import com.gmail.guitaekm.endergenesis.access.IIgnoreVehicleMovePackets;
 import com.gmail.guitaekm.endergenesis.blocks.TreeTraverser;
 import com.gmail.guitaekm.endergenesis.enderling_structure.LinkEnderworldPortals;
 import com.gmail.guitaekm.endergenesis.networking.ModNetworking;
@@ -50,16 +51,28 @@ public class VehicleTeleport {
                         3,
                         params.player.getId()
                 );
-        TreeTraverser<Entity> treeTraverser = TreeTraverser.parseVertex(
-                params.player.getRootVehicle(),
-                Entity::getPassengerList,
-                entity -> {
-                    if(entity.hasVehicle()) {
-                        entity.stopRiding();
+        TreeTraverser<Entity> treeTraverser = TreeTraverser
+                .parseVertex(
+                    params.player.getRootVehicle(),
+                    Entity::getPassengerList)
+                .mapValue(
+                    entity -> {
+                        if (entity.hasVehicle()) {
+                            entity.stopRiding();
+                        }
+                        entity.setOnGround(true);
+                        return entity;
                     }
-                    entity.setOnGround(true);
-                    return teleportUnmountedEntity(entity, params.targetWorld, params.portalPos, params.x, params.y, params.z);
-                });
+                ).mapValue(
+                    entity -> teleportUnmountedEntity(
+                            entity,
+                            params.targetWorld,
+                            params.portalPos,
+                            params.x,
+                            params.y,
+                            params.z
+                    )
+                );
         // tps with /tp of boats with players inside boats are completely ignored, players gets dismounted on tps
         // this all happens on client leading to desync randomly and unpredictable
         // having this line is more convenient, unfortuntely, you would get teleported far away from your
@@ -77,13 +90,14 @@ public class VehicleTeleport {
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> VehicleTeleport.unmountedPlayers.clear());
     }
 
-    public static void mountPlayer(int id) {
+    public static void mountPlayer(ServerPlayerEntity player, int id) {
         if (!VehicleTeleport.unmountedPlayers.containsKey(id)) {
             assert false;
             EnderGenesis.LOGGER.warn(MessageFormat.format("sent a {0} request but the server didn't expect it", ModNetworking.MOUNTING_READY.toString()));
             return;
         }
-        VehicleTeleport.unmountedPlayers.get(id).depthFirstSearch((parent, child) -> child.startRiding(parent, true));
+        ((IIgnoreVehicleMovePackets)player.networkHandler).endergenesis$setIgnore(false);
+        VehicleTeleport.unmountedPlayers.get(id).depthFirstSearch((parent, child) -> child.startRiding(parent));
         VehicleTeleport.unmountedPlayers.remove(id);
     }
 
@@ -98,8 +112,8 @@ public class VehicleTeleport {
         }
         // scraped and modified from DrownedEntity.tick
         // weirdly enough this isn't part of a method in a central place
-        int dx = (int) (portalPos.getX() - Math.floor(x));
-        int dz = (int) (portalPos.getZ() - Math.floor(z));
+        int dx = portalPos.getX() - x;
+        int dz = portalPos.getZ() - z;
         // by the way, the magic number 57.29... is just 180/pi, and it actually makes sense to
         // have it hard coded I guess for performance
         return (float)(MathHelper.atan2(dz, dx) * 57.2957763671875) - 90;
@@ -110,6 +124,7 @@ public class VehicleTeleport {
 
         if (entity instanceof ServerPlayerEntity player) {
             player.teleport(targetWorld, x, y, z, yaw, +0);
+            ((IIgnoreVehicleMovePackets)player.networkHandler).endergenesis$setIgnore(true);
             return player;
         }
         // scraped from the needed part of net.minecraft.server.command.TeleportCommand.teleport

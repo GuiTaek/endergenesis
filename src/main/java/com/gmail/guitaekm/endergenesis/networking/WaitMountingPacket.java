@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import java.util.*;
 
 public class WaitMountingPacket {
-    List<Integer> entitiesToWaitFor;
+    TreeTraverser<Integer> tree;
     Identifier destination;
 
     /**
@@ -19,34 +19,27 @@ public class WaitMountingPacket {
      * @param tree the riding stack
      */
     public WaitMountingPacket(ServerWorld destination, TreeTraverser<Entity> tree) {
-        Set<Integer> entitiesToWaitForSet = new HashSet<>();
-        tree.depthFirstSearch((Entity parent, Entity child) -> {
-            // every in-between entity is added twice, but not the root and the leaves
-            entitiesToWaitForSet.add(parent.getId());
-            entitiesToWaitForSet.add(child.getId());
-        });
-        this.entitiesToWaitFor = entitiesToWaitForSet.stream().toList();
+        this.tree = tree.mapValue(Entity::getId);
         this.destination = destination.getRegistryKey().getValue();
     }
     public WaitMountingPacket(PacketByteBuf buf) {
         this.destination = buf.readIdentifier();
-        this.entitiesToWaitFor = new ArrayList<>();
-        this.entitiesToWaitFor.addAll(Arrays.stream(buf.readIntArray()).boxed().toList());
+        List<Integer> entitiesToWaitFor = new ArrayList<>(Arrays.stream(buf.readIntArray()).boxed().toList());
+        List<Integer> entityChildren = new ArrayList<>(Arrays.stream(buf.readIntArray()).boxed().toList());
+        this.tree = TreeTraverser.createFromList(entityChildren, entitiesToWaitFor);
     }
     public void writeToBuf(PacketByteBuf buf) {
         buf.writeIdentifier(this.destination);
-        buf.writeIntArray(this.entitiesToWaitFor.stream().mapToInt(i->i).toArray());
+        buf.writeIntArray(this.tree.toList().stream().mapToInt(i -> i).toArray());
+        buf.writeIntArray(this.tree.toChildList().stream().mapToInt(i -> i).toArray());
     }
     public boolean checkReady(ClientWorld world) {
         if (!world.getRegistryKey().getValue().equals(this.destination)) {
             return false;
         }
-        for (int id : this.entitiesToWaitFor) {
-            if (world.getEntityById(id) == null) {
-                return false;
-            }
-            if (world.getEntityById(id).hasVehicle()) {
-                world.getEntityById(id).stopRiding();
+        for (int id : this.tree.toList()) {
+            Entity entity = world.getEntityById(id);
+            if (entity == null) {
                 return false;
             }
         }

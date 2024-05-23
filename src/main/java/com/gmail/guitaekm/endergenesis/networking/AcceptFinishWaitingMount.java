@@ -13,7 +13,7 @@ public class AcceptFinishWaitingMount {
         ServerPlayNetworking.registerGlobalReceiver(ModNetworking.MOUNTING_READY, new ServerPlayNetworking.PlayChannelHandler() {
             @Override
             public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-                VehicleTeleport.mountPlayer(player.getId());
+                VehicleTeleport.mountPlayer(player, player.getId());
             }
         });
     }
