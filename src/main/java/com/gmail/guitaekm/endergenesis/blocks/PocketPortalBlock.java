@@ -304,6 +304,12 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                         pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BEDROCK.getDefaultState());
                         continue;
                     }
+                    if (List.of(Blocks.CHEST, Blocks.TRAPPED_CHEST)
+                            .contains(pocketDimension.getBlockState(pos.add(x, y, z)).getBlock())
+                    ) {
+                        // this shall help making changes in the pocket dimension upgrade not as scary
+                        continue;
+                    }
                     pocketDimension.setBlockState(pos.add(x, y, z), Blocks.BARRIER.getDefaultState());
                 }
             }
