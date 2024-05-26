@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "endergenesis:block/enderworld_portal_block_1"
+    "bottom": "endergenesis:block/enderworld_portal_block_1_bottom",
+	"side": "endergenesis:block/enderworld_portal_block_1",
+    "top": "endergenesis:block/enderworld_portal_block_1_top"
   }
 }

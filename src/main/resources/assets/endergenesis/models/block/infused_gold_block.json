@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "endergenesis:block/infused_gold_block"
+    "bottom": "endergenesis:block/infused_gold_block_bottom",
+	"side": "endergenesis:block/infused_gold_block",
+    "top": "endergenesis:block/infused_gold_block_top"
   }
 }

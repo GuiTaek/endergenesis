@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "endergenesis:block/infused_glowstone"
+    "bottom": "endergenesis:block/infused_glowstone_bottom",
+	"side": "endergenesis:block/infused_glowstone",
+	"top": "endergenesis:block/infused_glowstone_top"
   }
 }
