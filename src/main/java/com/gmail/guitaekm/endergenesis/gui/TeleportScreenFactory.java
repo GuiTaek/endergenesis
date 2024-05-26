@@ -1,5 +1,6 @@
 package com.gmail.guitaekm.endergenesis.gui;
 
+import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import com.gmail.guitaekm.endergenesis.blocks.EnderworldPortalBlock;
 import com.gmail.guitaekm.endergenesis.networking.TeleportDestinations;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -9,7 +10,10 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.List;
 public class TeleportScreenFactory implements ExtendedScreenHandlerFactory {
     @Override
     public Text getDisplayName() {
-        return Text.of("my test screen name");
+        return TranslateString.translate("teleport_title");
     }
 
     @Nullable

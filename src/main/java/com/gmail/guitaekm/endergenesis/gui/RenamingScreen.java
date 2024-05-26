@@ -52,20 +52,20 @@ public class RenamingScreen extends HandledScreen<RenamingScreenHandler> {
         this.addDrawableChild(nameField);
         // the 20 is a number tied to minecraft textures of buttons
         this.okButton = new ButtonWidget(
-            BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, Text.of("ok"), button -> {
+            BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, TranslateString.translate("rename_button"), button -> {
                 this.handler.sendAnswer(this.nameField.getText(), AnswerRenamingRequest.ButtonPressed.OK);
             }
         );
         this.addDrawableChild(this.okButton);
 
         this.cancelButton = new ButtonWidget(
-            3 * BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, Text.of("cancel"), button -> {
+            3 * BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, TranslateString.translate("cancel_button"), button -> {
                 this.handler.sendAnswer(this.nameField.getText(), AnswerRenamingRequest.ButtonPressed.CANCEL);
             }
         );
         this.addDrawableChild(this.cancelButton);
         this.forgetButton = new ButtonWidget(
-                5 * BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, Text.of("forget"), button -> {
+                5 * BUTTON_WIDTH, HEIGHT_BUTTONS, BUTTON_WIDTH, 20, TranslateString.translate("forget_button"), button -> {
             this.handler.sendAnswer(this.nameField.getText(), AnswerRenamingRequest.ButtonPressed.FORGET);
         }
         );

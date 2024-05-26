@@ -1,5 +1,6 @@
 package com.gmail.guitaekm.endergenesis.gui;
 
+import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -7,6 +8,9 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 
 public class RenamingScreenFactory implements ExtendedScreenHandlerFactory {
@@ -30,6 +34,6 @@ public class RenamingScreenFactory implements ExtendedScreenHandlerFactory {
 
     @Override
     public Text getDisplayName() {
-        return Text.of("Rename Portal");
+        return TranslateString.translate("rename_title");
     }
 }

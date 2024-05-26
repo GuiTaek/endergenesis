@@ -5,5 +5,10 @@
   "block.endergenesis.infused_glowstone": "Durchdrungener Leuchtstein",
   "block.endergenesis.infused_gold_block": "Durchdrungener Goldblock",
   "block.endergenesis.pocket_portal_block": "Pocketportalblock",
-  "endergenesis.long_use_holding": "Außerweltliches Geräusch"
+  "cancel_button.endergenesis.screen": "Abbrechen",
+  "endergenesis.long_use_holding": "Außerweltliches Geräusch",
+  "forget_button.endergenesis.screen": "Vergessen",
+  "rename_button.endergenesis.screen": "Umbenennen",
+  "rename_title.endergenesis.screen": "Umbenennen",
+  "teleport_title.endergenesis.screen": "Teleportieren"
 }

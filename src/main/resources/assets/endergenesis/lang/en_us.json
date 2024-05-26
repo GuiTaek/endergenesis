@@ -5,5 +5,10 @@
   "block.endergenesis.infused_glowstone": "Infused Glowstone",
   "block.endergenesis.infused_gold_block": "Infused Block of Gold",
   "block.endergenesis.pocket_portal_block": "Pocket Portal Block",
-  "endergenesis.long_use_holding": "Otherworldly Sound"
+  "endergenesis.long_use_holding": "Otherworldly Sound",
+  "teleport_title.endergenesis.screen": "Teleport",
+  "rename_title.endergenesis.screen": "Rename",
+  "rename_button.endergenesis.screen": "Rename",
+  "cancel_button.endergenesis.screen": "Cancel",
+  "forget_button.endergenesis.screen": "Forget"
 }
