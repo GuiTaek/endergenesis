@@ -215,7 +215,6 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
             return;
         }
         if(player.getWorld().getBlockState(pos).get(GENERATED)) {
-            LinkGeneratedEnderworldPortal.generateOtherPortal(server, info.portal.placeable(), pos);
             Optional<BlockPos> portalPosOptional = info.portalGenerated.check(player.getWorld(), pos);
             if (portalPosOptional.isEmpty()) {
                 EnderGenesis.LOGGER.warn("Invalid portal block found. Invalidating it");
@@ -223,6 +222,7 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
                 return;
             }
             BlockPos portalPos = portalPosOptional.get();
+            LinkGeneratedEnderworldPortal.generateOtherPortal(server, info.portal.placeable(), pos);
             info.portal.placeable().place(player.getWorld(), portalPos, new Vec3i(0, 0, 0), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
         }
         if (player.getWorld().getRegistryKey().getValue().toString().equals("endergenesis:enderworld")) {

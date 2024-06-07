@@ -10,7 +10,6 @@ import com.gmail.guitaekm.endergenesis.networking.ModNetworking;
 import com.gmail.guitaekm.endergenesis.particle.LongUseParticle;
 import com.gmail.guitaekm.endergenesis.particle.ModParticles;
 import com.gmail.guitaekm.endergenesis.particle.EnderworldParticle;
-import com.gmail.guitaekm.endergenesis.resources.ModResourcesClient;
 import com.gmail.guitaekm.endergenesis.teleport.RegisterUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -25,7 +24,6 @@ public class EnderGenesisClient implements ClientModInitializer {
         ModNetworking.registerNetworkingClient();
         ModParticles.registerParticles();
         ModEventsClient.registerEvents();
-        ModResourcesClient.register();
         ModKeybindsClient.register();
         RegisterUtils.registerClient();
         RegisterGui.registerClient();

@@ -23,9 +23,9 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -143,12 +143,12 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                 .getStructure(new Identifier(EnderGenesis.MOD_ID, "pocket_portal"));
         assert pocketPortalOptional.isPresent();
         Structure pocketPortal = pocketPortalOptional.get();
-        StructureFeature<?> commonPocketPortal = Registry
-                .STRUCTURE_FEATURE
-                .get(new Identifier(EnderGenesis.MOD_ID, "common_pocket_portal"));
-        StructureFeature<?> rarePocketPortal = Registry
-                .STRUCTURE_FEATURE
-                .get(new Identifier(EnderGenesis.MOD_ID, "rare_pocket_portal"));
+        ConfiguredStructureFeature<?, ?> rarePocketPortal = BuiltinRegistries
+                .CONFIGURED_STRUCTURE_FEATURE
+                .get(new Identifier(EnderGenesis.MOD_ID, "rare_portal"));
+        ConfiguredStructureFeature<?, ?> commonPocketPortal = BuiltinRegistries
+                .CONFIGURED_STRUCTURE_FEATURE
+                .get(new Identifier(EnderGenesis.MOD_ID, "common_portal"));
         if (player.getWorld().getRegistryKey().equals(info.pocketDimensionKey())) {
             BlockPos targetPos = ((IServerPlayerPocketPortalAccess) player).endergenesis$getLastUsedPocketPortal();
             if (targetPos == null) {

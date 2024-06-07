@@ -4,8 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagManager;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
@@ -16,24 +15,24 @@ public class PaletteElement {
     }
 
     @Nullable
-    private BlockState state;
+    final private BlockState state;
     @Nullable
-    private Tag<Block> tag;
-    private Type type;
+    final private TagKey<Block> tag;
+    final private Type type;
 
-    public PaletteElement(BlockState state) {
+    public PaletteElement(@Nullable BlockState state) {
         this.state = state;
         this.tag = null;
         this.type = Type.BLOCK_STATE;
     }
 
-    public PaletteElement(Tag<Block> tag) {
+    public PaletteElement(@Nullable TagKey<Block> tag) {
         this.state = null;
         this.tag = tag;
         this.type = Type.TAG;
     }
 
-    public static PaletteElement create(TagManager tagManager, NbtCompound nbt) {
+    public static PaletteElement create(NbtCompound nbt) {
         if (!nbt.contains("is_tag") || !nbt.getBoolean("is_tag")) {
             return new PaletteElement(NbtHelper.toBlockState(nbt));
         }
@@ -45,10 +44,7 @@ public class PaletteElement {
             throw new IllegalArgumentException("Tags are of the format #<namespace>:<tag name>");
         }
         return new PaletteElement(
-                tagManager.getTag(
-                        Registry.BLOCK_KEY,
-                        new Identifier(out[0].substring(1), out[1]),
-                        id -> new IllegalArgumentException(id.toString()))
+                TagKey.of(Registry.BLOCK_KEY, new Identifier(out[0].substring(1), out[1]))
         );
 
     }
@@ -57,7 +53,7 @@ public class PaletteElement {
         return this.state;
     }
 
-    public @Nullable Tag<Block> getTag() {
+    public @Nullable TagKey<Block> getTag() {
         return this.tag;
     }
 

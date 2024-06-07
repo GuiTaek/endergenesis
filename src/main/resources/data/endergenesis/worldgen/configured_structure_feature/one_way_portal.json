@@ -1,7 +1,9 @@
 {
   "config": {
     "start_pool": "endergenesis:one_way_portal",
-    "size": 7
+    "size": 1
   },
-  "type": "endergenesis:one_way_portal"
+  "biomes": "#endergenesis:has_structure/one_way_portal",
+  "spawn_overrides": {},
+  "type": "minecraft:village"
 }

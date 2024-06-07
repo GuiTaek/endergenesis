@@ -1,7 +1,9 @@
 {
   "config": {
     "start_pool": "endergenesis:pocket_portal",
-    "size": 7
+    "size": 1
   },
-  "type": "endergenesis:rare_pocket_portal"
+  "biomes": "#endergenesis:has_structure/rare_pocket_portal",
+  "spawn_overrides": {},
+  "type": "minecraft:village"
 }

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "endergenesis:enderworld_portal_generated",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "spacing": 7, /* average distance apart in chunks between spawn attempts */
+    "separation": 5, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
+    "salt": 534324730,
+    "type": "minecraft:random_spread"
+  }
+}

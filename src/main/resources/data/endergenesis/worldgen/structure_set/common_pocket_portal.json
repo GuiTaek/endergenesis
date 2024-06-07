@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "endergenesis:common_pocket_portal",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "spacing": 3, /* average distance apart in chunks between spawn attempts */
+    "separation": 2, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
+    "salt": 399117345, /* this modifies the seed of the structure so no two structures always spawn over each-other. Make this large and unique. */
+    "type": "minecraft:random_spread"
+  }
+}

@@ -24,7 +24,7 @@ public class ArbitraryStructureRegistry implements SimpleSynchronousResourceRelo
         for (Map.Entry<Identifier, NbtCompound> entry : this.arbitraryStructuresUninitialized.entrySet()) {
             this.arbitraryStructures.put(
                     entry.getKey(),
-                    new ArbitraryStructure(entry.getValue(), server.getTagManager())
+                    new ArbitraryStructure(entry.getValue())
             );
         }
     }

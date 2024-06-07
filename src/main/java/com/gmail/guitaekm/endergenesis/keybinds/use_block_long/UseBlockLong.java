@@ -25,7 +25,7 @@ public class UseBlockLong {
     private static @Nullable SavedUsage current = null;
     public static void registerClass() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.options.keyUse.isPressed()) {
+            if (client.options.useKey.isPressed()) {
                 if (UseBlockLong.hasNewTarget(client)) {
                     UseBlockLong.callAllOnStartUse(client);
                     UseBlockLong.callAllOnUseTick(client);
@@ -86,7 +86,7 @@ public class UseBlockLong {
         return listeners;
     }
     protected static boolean hasNewTarget(MinecraftClient client) {
-        if (!client.options.keyUse.isPressed()) {
+        if (!client.options.useKey.isPressed()) {
             return false;
         }
         Optional<BlockPos> targetBlockOptional = UseBlockLong.getTargetBlockPos(client);
@@ -96,7 +96,7 @@ public class UseBlockLong {
         return current == null;
     }
     protected static boolean hasSameTarget(MinecraftClient client) {
-        if (!client.options.keyUse.isPressed()) {
+        if (!client.options.useKey.isPressed()) {
             return false;
         }
         Optional<BlockPos> targetBlockOptional = UseBlockLong.getTargetBlockPos(client);

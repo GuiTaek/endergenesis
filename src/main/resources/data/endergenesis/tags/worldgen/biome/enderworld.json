@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "endergenesis:enderworld_wastes",
+    "endergenesis:enderworld_forest",
+    "endergenesis:enderworld_foggy_forest"
+  ]
+}

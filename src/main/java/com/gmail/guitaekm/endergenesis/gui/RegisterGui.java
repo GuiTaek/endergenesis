@@ -2,7 +2,7 @@ package com.gmail.guitaekm.endergenesis.gui;
 
 import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
-import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -27,8 +27,6 @@ public class RegisterGui {
         );
     }
     public static void registerClient() {
-        ScreenRegistry.register(TELEPORT_SCREEN_HANDLER_TYPE, TeleportScreen::new);
-        ScreenRegistry.register(RENAMING_SCREEN_SCREEN_HANDLER_TYPE, RenamingScreen::new);
         NetherTeleportHandler.registerClient();
     }
 }
