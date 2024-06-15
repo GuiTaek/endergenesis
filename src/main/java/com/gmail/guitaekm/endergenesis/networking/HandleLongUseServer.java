@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HandleLongUseServer {
     public interface Listener {
-        void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos);
+        void onLongUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos);
     }
     protected static List<Listener> listeners = new ArrayList<>();
     public static void registerServer() {
@@ -22,7 +22,7 @@ public class HandleLongUseServer {
             public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
                 BlockPos pos = buf.readBlockPos();
                 for (Listener listener : HandleLongUseServer.listeners) {
-                    listener.onUse(server, player, pos);
+                    listener.onLongUse(server, player, pos);
                 }
             }
         });

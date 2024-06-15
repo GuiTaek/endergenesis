@@ -37,7 +37,7 @@ public class OneWayPortal extends BlockWithEntity implements HandleLongUseServer
     }
 
     @Override
-    public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
+    public void onLongUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
         if (!this.getStateManager().getStates().contains(player.getWorld().getBlockState(pos))) {
             return;
         }

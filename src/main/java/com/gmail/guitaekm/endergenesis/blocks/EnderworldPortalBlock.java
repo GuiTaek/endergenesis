@@ -158,7 +158,7 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
         builder.add(GENERATED);
     }
     @Override
-    public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
+    public void onLongUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
         LazyInformation info = EnderworldPortalBlock.getInfo(server);
         if(player.getWorld().getBlockState(pos).getBlock() != this) {
             return;

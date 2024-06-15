@@ -134,7 +134,7 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
         return pocketPlace;
     }
     @Override
-    public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
+    public void onLongUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
         ModWorlds.LazyInformation info = ModWorlds.getInfo(server);
         if (!player.getWorld().getBlockState(pos).getBlock().equals(this)) {
             return;

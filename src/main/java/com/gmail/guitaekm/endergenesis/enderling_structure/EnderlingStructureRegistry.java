@@ -107,7 +107,7 @@ public class EnderlingStructureRegistry implements
 
     // called only by server
     @Override
-    public void onUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
+    public void onLongUse(MinecraftServer server, ServerPlayerEntity player, BlockPos pos) {
         ServerWorld world = player.getWorld();
         Identifier id = this.findEnderlingStructure(player, pos);
         EnderlingStructure structure = this.get(id);
