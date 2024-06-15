@@ -8,7 +8,7 @@
   "placement": {
     "spacing": 12, /* average distance apart in chunks between spawn attempts */
     "separation": 8, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
-    "salt": 1657382463, /* this modifies the seed of the structure so no two structures always spawn over each-other. Make this large and unique. */
+    "salt": 1657382491, /* this modifies the seed of the structure so no two structures always spawn over each-other. Make this large and unique. */
     "type": "minecraft:random_spread"
   }
 }
