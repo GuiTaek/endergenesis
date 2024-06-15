@@ -18,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
@@ -25,11 +26,13 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PocketPortalBlock extends Block implements HandleLongUseServer.Listener {
     // these will be configured through arbitrary structures -- it's just not implemented yet
@@ -46,24 +49,6 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
 
     // configure
     public static Vec3i CORE_OFFSET = new Vec3i(0, 3, 0);
-
-    // configure
-    public static List<Set<Block>> WARD_BLOCK = List.of(
-            Set.of(
-                    Blocks.END_STONE_BRICKS
-            ),
-            Set.of(
-                    Blocks.IRON_BLOCK
-            ),
-            Set.of(
-                    Blocks.DIAMOND_BLOCK,
-                    Blocks.AMETHYST_BLOCK
-            ),
-            Set.of(
-                    Blocks.NETHERITE_BLOCK,
-                    Blocks.BEACON
-            )
-    );
 
     // configure
     public static List<Vec3i> WARD_POWERS = List.of(
@@ -334,26 +319,36 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
      * @return the dimensions the pocket portal should have, but only the radiusses
      */
     public Vec3i getPocketDimensionDimensions(ServerWorld pocketDimension, BlockPos portalPos) {
-        Vec3i firstOffset = MANTLE_OFFSETS.iterator().next();
-        Block mantleBlock = pocketDimension
-                .getBlockState(portalPos.add(firstOffset.getX(), firstOffset.getY(), firstOffset.getZ()))
-                .getBlock();
-        List<Vec3i> notFittingBlocks = MANTLE_OFFSETS.stream().filter(offset -> (
-                pocketDimension
-                        .getBlockState(portalPos.add(offset.getX(), offset.getY(), offset.getZ()))
-                        .getBlock()
-                        != mantleBlock
-        )).toList();
-        if (!notFittingBlocks.isEmpty()) {
+        // have to hard-code the number of tiers, because of the bedrock shield and the bedrock
+        // shield is because of the birthday paradox
+        List<TagKey<Block>> WARD_BLOCKS = List.of(
+                TagKey.of(Registry.BLOCK_KEY, new Identifier(EnderGenesis.MOD_ID, "pocket_dimension_ward/1")),
+                TagKey.of(Registry.BLOCK_KEY, new Identifier(EnderGenesis.MOD_ID, "pocket_dimension_ward/2")),
+                TagKey.of(Registry.BLOCK_KEY, new Identifier(EnderGenesis.MOD_ID, "pocket_dimension_ward/3")),
+                TagKey.of(Registry.BLOCK_KEY, new Identifier(EnderGenesis.MOD_ID, "pocket_dimension_ward/4"))
+        );
+        int mantleTier = MANTLE_OFFSETS.stream().map(off -> {
+            Block currBlock = pocketDimension.getBlockState(
+                    portalPos.add(off)
+            ).getBlock();
+            RegistryEntry<Block> currBlockId = Registry.BLOCK.getOrCreateEntry(Registry.BLOCK.getKey(currBlock).orElse(null));
+            Optional<Integer> currMantleTier = IntStream.rangeClosed(0, 3).filter(
+                    ind -> currBlockId.isIn(WARD_BLOCKS.get(ind))
+            ).boxed().reduce((first, second) -> second);
+            // -1 means failed
+            return currMantleTier.orElse(-1);
+            // the orElse part should never happen
+        }).min(Integer::compare).orElse(-2);
+        assert mantleTier != -2;
+        if (mantleTier == -1) {
             return new Vec3i(0, 0, 0);
         }
-        Block coreBlock = pocketDimension.getBlockState(portalPos.add(CORE_OFFSET.getX(), CORE_OFFSET.getY(), CORE_OFFSET.getZ())).getBlock();
-        for (int i = 0; i < WARD_POWERS.size(); i++) {
-            if (WARD_BLOCK.get(i).contains(mantleBlock)) {
-                if (WARD_BLOCK.get(i + 1).contains(coreBlock)) {
-                    return WARD_POWERS.get(i);
-                }
-            }
+        Block coreBlock = pocketDimension.getBlockState(
+                portalPos.add(CORE_OFFSET)
+        ).getBlock();
+        RegistryEntry<Block> currBlockId = Registry.BLOCK.getOrCreateEntry(Registry.BLOCK.getKey(coreBlock).orElse(null));
+        if (currBlockId.isIn(WARD_BLOCKS.get(mantleTier + 1))) {
+            return WARD_POWERS.get(mantleTier);
         }
         return new Vec3i(0, 0, 0);
     }
