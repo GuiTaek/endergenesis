@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "endergenesis:enderworld_portal_generated_dark_forest",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "spacing": 2, /* average distance apart in chunks between spawn attempts */
+    "separation": 1, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
+    "salt": 1003021297,
+    "type": "minecraft:random_spread"
+  }
+}

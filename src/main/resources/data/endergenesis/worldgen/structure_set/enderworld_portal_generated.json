@@ -6,8 +6,8 @@
     }
   ],
   "placement": {
-    "spacing": 7, /* average distance apart in chunks between spawn attempts */
-    "separation": 5, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
+    "spacing": 4, /* average distance apart in chunks between spawn attempts */
+    "separation": 2, /* minimum distance apart in chunks between spawn attempts. MUST BE LESS THAN ABOVE VALUE */
     "salt": 534324743,
     "type": "minecraft:random_spread"
   }
