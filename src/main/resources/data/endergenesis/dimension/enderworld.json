@@ -3,7 +3,7 @@
   "generator": {
     "type": "minecraft:noise",
     "seed": 0,
-    "settings": "endergenesis:merged",
+    "settings": "endergenesis:enderworld",
     "biome_source": {
       "type": "minecraft:multi_noise",
       "biomes": [
