@@ -5,6 +5,7 @@ import com.gmail.guitaekm.endergenesis.event.DeathPersistantPlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -26,7 +27,7 @@ public class ServerPlayerPocketPortalMixin implements IServerPlayerPocketPortalA
     private @Nullable ChunkPos pocketDimensionPlace = null;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo info) {
+    private void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey, CallbackInfo info) {
         new DeathPersistantPlayer(
                 ServerPlayerPocketPortalMixin::readNbt,
                 ServerPlayerPocketPortalMixin::writeNbt

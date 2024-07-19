@@ -7,6 +7,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,7 +40,7 @@ public class ServerPlayerNetherEnderworldPortalMixin implements IServerPlayerNet
     private EnderworldPortalBlock.NetherInstance source = null;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo info) {
+    public void constructorTail(MinecraftServer server, ServerWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey, CallbackInfo info) {
         new DeathPersistantPlayer(
                 ServerPlayerNetherEnderworldPortalMixin::readNbt,
                 ServerPlayerNetherEnderworldPortalMixin::writeNbt

@@ -144,6 +144,11 @@ public class TeleportScreenHandler extends ScreenHandler implements ServerPlayNe
     public Entity vehicle;
 
     @Override
+    public ItemStack transferSlot(PlayerEntity player, int index) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public boolean canUse(PlayerEntity player) {
         if (this.source == null) {
             return true;

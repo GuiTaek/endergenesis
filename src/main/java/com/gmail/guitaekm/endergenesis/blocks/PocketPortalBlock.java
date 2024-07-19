@@ -16,7 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.Structure;
+import net.minecraft.structure.StructureTemplate;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -24,11 +26,9 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -124,19 +124,10 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
         if (!player.getWorld().getBlockState(pos).getBlock().equals(this)) {
             return;
         }
-        Optional<Structure> pocketPortalOptional = server
-                .getStructureManager()
-                .getStructure(new Identifier(EnderGenesis.MOD_ID, "pocket_portal"));
-        assert pocketPortalOptional.isPresent();
-        Structure pocketPortal = pocketPortalOptional.get();
-        // from SpawnHelper
-        ConfiguredStructureFeature<?, ?> rarePocketPortal = server
-                .getOverworld()
-                .getStructureAccessor()
-                .method_41036()
-                .get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY)
-                .get(new Identifier("endergenesis:rare_pocket_portal"));
-        ConfiguredStructureFeature<?, ?> commonPocketPortal = server.getOverworld().getStructureAccessor().method_41036().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).get(new Identifier("endergenesis:common_pocket_portal"));
+        RegistryKey<Structure> portalKey = RegistryKey.of(Registry.STRUCTURE_KEY, new Identifier(EnderGenesis.MOD_ID, "pocket_portal"));
+        Optional<StructureTemplate> portalTemplateOptional = server.getOverworld().getStructureTemplateManager().getTemplate(new Identifier(EnderGenesis.MOD_ID, "pocket_portal"));
+        assert portalTemplateOptional.isPresent();
+        StructureTemplate portalTemplate = portalTemplateOptional.get();
         if (player.getWorld().getRegistryKey().equals(info.pocketDimensionKey())) {
             BlockPos targetPos = ((IServerPlayerPocketPortalAccess) player).endergenesis$getLastUsedPocketPortal();
             if (targetPos == null) {
@@ -145,14 +136,16 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
                 return;
             }
             ((IServerPlayerPocketPortalAccess) player).endergenesis$setLastUsedPocketPortal(null);
-            if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, rarePocketPortal).hasChildren()) {
-                if (!info.enderworld().getStructureAccessor().getStructureAt(targetPos, commonPocketPortal).hasChildren()) {
-                    EnderGenesis.LOGGER.warn("corrupted player data");
-                    VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld(), player);
-                    return;
-                }
+            boolean hasPortal = info.enderworld().getStructureAccessor().getStructureContaining(
+                    targetPos,
+                    portalKey
+            ).getStructure() != null;
+            if (hasPortal) {
+                EnderGenesis.LOGGER.warn("corrupted player data");
+                VehicleTeleport.teleportToEnderworldSpawn(server, info.enderworld(), player);
+                return;
             }
-            PocketPortalBlock.pocketPortalTeleport(info.enderworld(), player, pocketPortal, targetPos);
+            PocketPortalBlock.pocketPortalTeleport(info.enderworld(), player, portalTemplate, targetPos);
 
         } else if (player.getWorld().getRegistryKey().equals(info.enderworldKey())) {
             ((IServerPlayerPocketPortalAccess) player).endergenesis$setLastUsedPocketPortal(pos.up());
@@ -162,7 +155,7 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
             // It should be saved in the world and a free space should be chosen
             BlockPos pocketPos = PocketPortalBlock.getOrCreatePocketPortalPos(player).getBlockPos(7, 0, 7);
             this.preparePocketDimension(info.pocketDimension(), pocketPos);
-            PocketPortalBlock.pocketPortalTeleport(info.pocketDimension(), player, pocketPortal, pocketPos.withY(5));
+            PocketPortalBlock.pocketPortalTeleport(info.pocketDimension(), player, portalTemplate, pocketPos.withY(5));
         } else {
             EnderGenesis.LOGGER.warn("Player tried to walk through a pocket portal outside of enderworld and pocket dimension. Should be impossible in survival.");
         }
@@ -214,7 +207,7 @@ public class PocketPortalBlock extends Block implements HandleLongUseServer.List
      * @param destination the world to teleport to
      * @param portalPosition position of the portal block
      */
-    public static void pocketPortalTeleport(ServerWorld destination, ServerPlayerEntity player, Structure pocketPortal, BlockPos portalPosition) {
+    public static void pocketPortalTeleport(ServerWorld destination, ServerPlayerEntity player, StructureTemplate pocketPortal, BlockPos portalPosition) {
         // configure
         Vec3i pocketPortalOffset = new Vec3i(-3, -5, -3);
 

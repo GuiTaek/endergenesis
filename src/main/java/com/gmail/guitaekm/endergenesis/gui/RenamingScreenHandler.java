@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
@@ -40,6 +41,11 @@ public class RenamingScreenHandler extends ScreenHandler implements ServerPlayNe
         super(RegisterGui.RENAMING_SCREEN_SCREEN_HANDLER_TYPE, syncId);
         this.currName = buf.readString();
         this.pos = buf.readBlockPos();
+    }
+
+    @Override
+    public ItemStack transferSlot(PlayerEntity player, int index) {
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.gmail.guitaekm.endergenesis.blocks.EnderworldPortalBlock;
 import com.gmail.guitaekm.endergenesis.event.EnderlingStructureEvents;
 import com.gmail.guitaekm.endergenesis.items.ModItems;
 import com.gmail.guitaekm.endergenesis.teleport.TeleportParams;
+import com.gmail.guitaekm.endergenesis.utils.Utils;
 import com.gmail.guitaekm.endergenesis.worldgen.ModWorlds;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
@@ -19,6 +20,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.random.CheckedRandom;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.WorldAccess;
@@ -88,7 +91,7 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
 
     public static BlockPos overworldToEnderworldRandom(WorldAccess enderworld, BlockPos overworldPos, long seed) {
         // overflow is explicitly desired and possible
-        Random random = new Random(seed + SALT + X_SALT * overworldPos.getX() + Z_SALT * overworldPos.getZ());
+        Random random = new CheckedRandom(seed + SALT + X_SALT * overworldPos.getX() + Z_SALT * overworldPos.getZ());
         BlockPos start = EnderworldPortalBlock.overworldToEnderworldStart(enderworld.getServer(), overworldPos);
         BlockPos end = EnderworldPortalBlock.overworldToEnderworldEnd(enderworld.getServer(), overworldPos);
         return  new BlockPos(
@@ -293,8 +296,7 @@ public class LinkEnderworldPortals implements EnderlingStructureEvents.OnConvert
                 unshuffledSet.add(new Vec3i(-depth, yoff, iterCoord));
                 unshuffledSet.add(new Vec3i(depth, yoff, iterCoord));
             }
-            List<Vec3i> toShuffledRing = new ArrayList<>(unshuffledSet);
-            Collections.shuffle(toShuffledRing, random);
+            List<Vec3i> toShuffledRing = Utils.shuffleList(new ArrayList<>(unshuffledSet), random);
             result.addAll(toShuffledRing);
         }
         return result;

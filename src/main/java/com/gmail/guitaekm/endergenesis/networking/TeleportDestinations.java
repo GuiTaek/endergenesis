@@ -4,7 +4,6 @@ import com.gmail.guitaekm.endergenesis.blocks.EnderworldPortalBlock;
 import net.minecraft.network.PacketByteBuf;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class TeleportDestinations {
 
@@ -18,10 +17,11 @@ public class TeleportDestinations {
 
     public TeleportDestinations(PacketByteBuf packet) {
         int sourceIndex = packet.readInt();
-        List<EnderworldPortalBlock.NetherInstance> destinations = packet.readList(new Function<PacketByteBuf, EnderworldPortalBlock.NetherInstance>() {
+        List<EnderworldPortalBlock.NetherInstance> destinations = packet.readList(new PacketByteBuf.PacketReader<>() {
             int id = 0;
+
             @Override
-            public EnderworldPortalBlock.NetherInstance apply(PacketByteBuf packet) {
+            public EnderworldPortalBlock.NetherInstance apply(PacketByteBuf packetByteBuf) {
                 return new EnderworldPortalBlock.NetherInstance(id++, packet.readString(), packet.readBlockPos());
             }
         });

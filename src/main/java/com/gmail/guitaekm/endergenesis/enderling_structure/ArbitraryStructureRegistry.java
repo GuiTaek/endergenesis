@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
@@ -14,6 +15,7 @@ import net.minecraft.util.Identifier;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ArbitraryStructureRegistry implements SimpleSynchronousResourceReloadListener, ServerLifecycleEvents.ServerStarting {
     private final Map<Identifier, NbtCompound> arbitraryStructuresUninitialized = new HashMap<>();
@@ -42,7 +44,7 @@ public class ArbitraryStructureRegistry implements SimpleSynchronousResourceRelo
     public void reload(ResourceManager manager) {
         this.arbitraryStructuresUninitialized.clear();
         this.arbitraryStructures.clear();
-        for(Identifier id : manager.findResources("structures", path -> path.endsWith(".nbt"))) {
+        for(Identifier id : manager.findResources("structures", path -> path.getPath().endsWith(".nbt")).keySet()) {
             Identifier modifiedId = new Identifier(
                     id.getNamespace(),
                     id.getPath()
@@ -50,13 +52,18 @@ public class ArbitraryStructureRegistry implements SimpleSynchronousResourceRelo
                             .split(".nbt")[0]
             );
             try {
-                NbtCompound nbt = NbtIo.readCompressed(manager.getResource(id).getInputStream());
+                Optional<Resource> resource = manager.getResource(id);
+                if (resource.isEmpty()) {
+                    // no idea how this could happen
+                    continue;
+                }
+                NbtCompound nbt = NbtIo.readCompressed(resource.get().getInputStream());
                 this.arbitraryStructuresUninitialized.put(modifiedId, nbt);
             } catch(IOException e) {
-                EnderGenesis.LOGGER.error("Error with file opening of enderling structure json " + id.toString(), e);
+                EnderGenesis.LOGGER.error("Error with file opening of enderling structure json {}", id.toString(), e);
                 throw new RuntimeException("handle exception while loading data pack");
             } catch(Exception e) {
-                EnderGenesis.LOGGER.error("Error occurred while loading resource arbitrary structure nbt " + id.toString(), e);
+                EnderGenesis.LOGGER.error("Error occurred while loading resource arbitrary structure nbt {}", id.toString(), e);
             }
         }
     }

@@ -126,7 +126,7 @@ public class EnderworldPortalBlock extends BlockWithEntity implements HandleLong
         ServerWorld enderworld = ModWorlds.getInfo(server).enderworld();
         assert enderworld != null;
         assert enderworld.getDimension() != null;
-        int dimensionScaleInverse = (int) Math.round(1D / enderworld.getDimension().getCoordinateScale());
+        int dimensionScaleInverse = (int) Math.round(1D / enderworld.getDimension().coordinateScale());
 
         // the reason this is here is, because I want, that the EnderlingStructureRegistry is ready
         EnderlingStructure portal = EnderlingStructureInitializer

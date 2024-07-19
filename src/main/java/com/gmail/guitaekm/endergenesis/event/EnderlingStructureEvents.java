@@ -1,6 +1,7 @@
 package com.gmail.guitaekm.endergenesis.event;
 
 import com.gmail.guitaekm.endergenesis.enderling_structure.EnderlingStructure;
+import com.gmail.guitaekm.endergenesis.utils.Utils;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,9 +37,9 @@ public class EnderlingStructureEvents {
     public static Event<OnConvertListener> ON_CONVERT = EventFactory.createArrayBacked(
             OnConvertListener.class,
             (callbacks -> (player, world, structureId, structure, root) -> {
-                List<OnConvertListener> callbacksCopy = Arrays.asList(callbacks);
                 // I want it to be random
-                Collections.shuffle(callbacksCopy, world.getRandom());
+                List<OnConvertListener> callbacksCopy = Utils.shuffleList(Arrays.asList(callbacks), world.getRandom());
+
                 for (OnConvertListener callback : callbacksCopy) {
                     if (!callback.onConvert(player, world, structureId, structure, root)) {
                         return false;

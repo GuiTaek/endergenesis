@@ -57,7 +57,7 @@ public class ShowLongUse implements CallbackClient {
     public void onStartUse(MinecraftClient client, World world, PlayerEntity player, BlockPos pos) {
         ShowLongUse.isValidPos = ShowLongUse.checkValidLongUse(world, player, pos);
         if (ShowLongUse.isValidPos) {
-            ShowLongUse.soundInProgress = new PositionedSoundInstance(this.LONG_USE_SOUND, SoundCategory.AMBIENT, 1f, 1f, pos);
+            ShowLongUse.soundInProgress = new PositionedSoundInstance(this.LONG_USE_SOUND, SoundCategory.AMBIENT, 1f, 1f, world.getRandom(), pos);
             client.getSoundManager().play(ShowLongUse.soundInProgress);
         }
     }

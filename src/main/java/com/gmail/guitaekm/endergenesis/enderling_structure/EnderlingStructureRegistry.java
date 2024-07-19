@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
@@ -56,10 +57,14 @@ public class EnderlingStructureRegistry implements
     public void reload(ResourceManager manager) {
         this.uninitializedEnderlingStructures.clear();
         this.enderlingStructures.clear();
-        for(Identifier id : manager.findResources("enderling_structures_new", path -> path.endsWith(".json"))) {
+        for(Identifier id : manager.findResources("enderling_structures_new", path -> path.getPath().endsWith(".json")).keySet()) {
             try {
                 StringWriter writer = new StringWriter();
-                IOUtils.copy(manager.getResource(id).getInputStream(), writer, "UTF-8");
+                Optional<Resource> resource = manager.getResource(id);
+                if (resource.isEmpty()) {
+                    continue;
+                }
+                IOUtils.copy(resource.get().getInputStream(), writer, "UTF-8");
                 JsonElement json = JsonParser.parseString(writer.toString());
                 Identifier enderlingStructureId = new Identifier(
                         id.getNamespace(),

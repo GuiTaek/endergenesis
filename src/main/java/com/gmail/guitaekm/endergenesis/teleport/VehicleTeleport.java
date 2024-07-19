@@ -203,9 +203,9 @@ public class VehicleTeleport {
         BlockPos overworldSpawn = server.getOverworld().getSpawnPos();
         BlockPos overworldPlace = overworldSpawn
                 .add(
-                        enderworld.getRandom().nextInt(-spawnRadius, spawnRadius),
+                        enderworld.getRandom().nextBetween(-spawnRadius, spawnRadius),
                         0,
-                        enderworld.getRandom().nextInt(-spawnRadius, spawnRadius)
+                        enderworld.getRandom().nextBetween(-spawnRadius, spawnRadius)
                 );
         BlockPos enderworldPlace = LinkEnderworldPortals.overworldToEnderworldRandom(enderworld, overworldPlace, enderworld.getSeed());
         int y = enderworld

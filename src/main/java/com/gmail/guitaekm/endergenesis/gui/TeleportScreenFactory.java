@@ -1,6 +1,5 @@
 package com.gmail.guitaekm.endergenesis.gui;
 
-import com.gmail.guitaekm.endergenesis.EnderGenesis;
 import com.gmail.guitaekm.endergenesis.blocks.EnderworldPortalBlock;
 import com.gmail.guitaekm.endergenesis.networking.TeleportDestinations;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -10,10 +9,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

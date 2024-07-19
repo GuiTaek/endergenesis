@@ -1,24 +1,19 @@
 package com.gmail.guitaekm.endergenesis.enderling_structure;
 
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.fabricmc.fabric.impl.registry.sync.FabricRegistry;
-import net.fabricmc.fabric.impl.tag.convention.TagRegistration;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.nbt.*;
 import net.minecraft.tag.TagKey;
-import net.minecraft.tag.TagManagerLoader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.WorldAccess;
+import com.gmail.guitaekm.endergenesis.utils.Utils;
 
 import java.util.*;
+
 
 public class ArbitraryStructure {
     public final List<PaletteElement> palette;
@@ -67,14 +62,17 @@ public class ArbitraryStructure {
                 TagKey<Block> tag = elem.getTag();
                 assert tag != null;
                 List<Block> list = Registry.BLOCK.getOrCreateEntryList(tag).stream().map(RegistryEntry::value).toList();
-                toPlaceState = list.get(new Random().nextInt(list.size())).getDefaultState();
+                toPlaceState = list.get(world.getRandom().nextInt(list.size())).getDefaultState();
             }
             world.setBlockState(pos.subtract(offset).add(entry.getKey()), toPlaceState, flags);
         }
     }
     public Optional<BlockPos> check(WorldAccess world, BlockPos pos) {
-        List<Vec3i> offsetsShuffled = new ArrayList<>(this.checkOffsets);
-        Collections.shuffle(offsetsShuffled, world.getRandom());
+        Random random = world.getRandom();
+        List<Vec3i> offsetsShuffled = Utils.shuffleList(new ArrayList<Vec3i>(), random);
+
+
+        //Collections.shuffle(offsetsShuffled, world.getRandom());
         for (Vec3i offset : offsetsShuffled) {
             if (this.checkWithOffset(world, pos, offset)) {
                 return Optional.of(pos.subtract(offset));
