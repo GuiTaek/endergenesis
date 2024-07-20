@@ -50,14 +50,14 @@ public class EnderlingStructureRegistry implements
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier("enderling_structure_new");
+        return new Identifier("enderling_structure");
     }
 
     @Override
     public void reload(ResourceManager manager) {
         this.uninitializedEnderlingStructures.clear();
         this.enderlingStructures.clear();
-        for(Identifier id : manager.findResources("enderling_structures_new", path -> path.getPath().endsWith(".json")).keySet()) {
+        for(Identifier id : manager.findResources("enderling_structures", path -> path.getPath().endsWith(".json")).keySet()) {
             try {
                 StringWriter writer = new StringWriter();
                 Optional<Resource> resource = manager.getResource(id);
@@ -69,7 +69,7 @@ public class EnderlingStructureRegistry implements
                 Identifier enderlingStructureId = new Identifier(
                         id.getNamespace(),
                         id.getPath()
-                                .split("enderling_structures_new/")[1]
+                                .split("enderling_structures/")[1]
                                 .split(".json")[0]
                 );
                 // this is so small no need for an extra class
