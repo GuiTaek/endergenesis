@@ -2,7 +2,7 @@
   "type": "endergenesis:enderworld",
   "generator": {
     "type": "minecraft:noise",
-    "seed": 0,
+    "seed": 142865735,
     "settings": "endergenesis:enderworld",
     "biome_source": {
       "type": "minecraft:multi_noise",

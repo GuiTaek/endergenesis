@@ -1,9 +1,0 @@
-{
-  "config": {
-    "start_pool": "endergenesis:enderman_enderworld",
-    "size": 1
-  },
-  "biomes": "#endergenesis:has_structure/enderman_enderworld",
-  "spawn_overrides": {},
-  "type": "minecraft:village"
-}
