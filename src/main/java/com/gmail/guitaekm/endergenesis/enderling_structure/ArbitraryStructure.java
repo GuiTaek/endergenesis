@@ -69,10 +69,7 @@ public class ArbitraryStructure {
     }
     public Optional<BlockPos> check(WorldAccess world, BlockPos pos) {
         Random random = world.getRandom();
-        List<Vec3i> offsetsShuffled = Utils.shuffleList(new ArrayList<Vec3i>(), random);
-
-
-        //Collections.shuffle(offsetsShuffled, world.getRandom());
+        List<Vec3i> offsetsShuffled = Utils.shuffleList(new ArrayList<Vec3i>(this.checkOffsets), random);
         for (Vec3i offset : offsetsShuffled) {
             if (this.checkWithOffset(world, pos, offset)) {
                 return Optional.of(pos.subtract(offset));
