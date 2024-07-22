@@ -7,6 +7,11 @@ import net.minecraft.util.Util;
 
 public class TranslateString {
     public static Text translate(String identifier) {
-        return Text.literal(Util.createTranslationKey(identifier, new Identifier(EnderGenesis.MOD_ID, "screen")));
+        return Text.translatable(
+                Util.createTranslationKey(
+                        identifier,
+                        new Identifier(EnderGenesis.MOD_ID, "screen")
+                )
+        );
     }
 }
