@@ -26,10 +26,10 @@ public class RegisterGui {
                 new Identifier(EnderGenesis.MOD_ID, "renaming_screen"),
                 RENAMING_SCREEN_SCREEN_HANDLER_TYPE
         );
-        HandledScreens.register(TELEPORT_SCREEN_HANDLER_TYPE, TeleportScreen::new);
-        HandledScreens.register(RENAMING_SCREEN_SCREEN_HANDLER_TYPE, RenamingScreen::new);
     }
     public static void registerClient() {
         NetherTeleportHandler.registerClient();
+        HandledScreens.register(TELEPORT_SCREEN_HANDLER_TYPE, TeleportScreen::new);
+        HandledScreens.register(RENAMING_SCREEN_SCREEN_HANDLER_TYPE, RenamingScreen::new);
     }
 }
